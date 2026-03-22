@@ -1,0 +1,47 @@
+{
+  "name": "skillproof-dao",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently -k \"npm:dev:api\" \"npm:dev:web\"",
+    "clean:next": "node scripts/clean-next.mjs",
+    "dev:web": "npm run clean:next && next dev",
+    "dev:api": "tsx watch server/index.ts",
+    "build": "npm run build:api && npm run build:web && npm run build:program",
+    "build:web": "npm run clean:next && next build",
+    "build:api": "tsc --noEmit -p tsconfig.server.json",
+    "build:program": "cargo check -p skillproof",
+    "anchor:idl": "anchor idl build",
+    "preview": "npm run build:web && next start"
+  },
+  "dependencies": {
+    "@coral-xyz/anchor": "^0.31.1",
+    "@solana/wallet-adapter-base": "^0.9.27",
+    "@solana/wallet-adapter-phantom": "^0.9.28",
+    "@solana/wallet-adapter-react": "^0.15.39",
+    "@solana/wallet-adapter-react-ui": "^0.9.39",
+    "@solana/wallet-adapter-solflare": "^0.6.32",
+    "@solana/web3.js": "^1.98.4",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "next": "^15.3.1",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.22.0",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.7.2",
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2",
+    "concurrently": "^9.2.1",
+    "eslint": "^9.22.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.19",
+    "tsx": "^4.20.6",
+    "typescript": "~5.8.2",
+    "typescript-eslint": "^8.26.1"
+  }
+}
