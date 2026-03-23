@@ -1,0 +1,2343 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SkillProof DAO</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+/* ══ THEME TOKENS ══ */
+[data-theme="dark"]{--bg:#0f0b08;--bg2:#17110d;--bg3:#211813;--bg4:#2a1f18;--border:rgba(255,201,159,0.1);--border2:rgba(255,201,159,0.2);--text:#f8eee4;--text2:#c9a88d;--text3:#8e6f58;--nav-bg:rgba(15,11,8,0.93);--card-bg:#1c140f;--card-hover:#261b14;--shadow:0 10px 34px rgba(0,0,0,0.48);--ssm:0 2px 10px rgba(0,0,0,0.35);--inp:#1a130f;--sbr:#5a4335;}
+[data-theme="light"]{--bg:#f7efe2;--bg2:#fffcf6;--bg3:#fbf2e6;--bg4:#f2e6d6;--border:rgba(120,74,42,0.12);--border2:rgba(120,74,42,0.2);--text:#2f1f16;--text2:#7a5b45;--text3:#b08f78;--nav-bg:rgba(247,239,226,0.93);--card-bg:#fff7eb;--card-hover:#f7ecdd;--shadow:0 8px 28px rgba(122,72,40,0.11);--ssm:0 2px 10px rgba(122,72,40,0.07);--inp:#fffdf8;--sbr:#d9b596;}
+:root{--g:#ff6e2d;--g2:#d45b21;--gd:rgba(255,110,45,0.09);--gg:rgba(255,110,45,0.2);--red:#ff4444;--amb:#f5a623;--blue:#4a9eff;--fh:'Syne',sans-serif;--fb:'Space Grotesk',sans-serif;--r:10px;--r2:16px;--ease:cubic-bezier(.4,0,.2,1);}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--fb);font-size:15px;line-height:1.6;min-height:100vh;cursor:none;transition:background .32s,color .32s;}
+a{color:var(--blue);text-decoration:none;}a:hover{text-decoration:underline;}
+
+/* ══ CURSOR ══ */
+#cd{position:fixed;top:0;left:0;z-index:9999;pointer-events:none;width:7px;height:7px;border-radius:50%;background:var(--g);transform:translate(-50%,-50%);transition:width .1s,height .1s;}
+#cg{position:fixed;top:0;left:0;z-index:9996;pointer-events:none;width:88px;height:88px;border-radius:50%;background:radial-gradient(circle,rgba(255,110,45,0.07) 0%,transparent 65%);transform:translate(-50%,-50%);transition:all .42s var(--ease);}
+.ch #cd{width:4px;height:4px;}
+.cc #cd{width:13px;height:13px;opacity:.45;}
+
+/* ══ SCROLL BAR ══ */
+#spb{position:fixed;top:60px;left:0;height:2px;z-index:102;background:var(--g);width:0%;transition:width .08s linear;}
+
+/* ══ NAV ══ */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:60px;background:var(--nav-bg);border-bottom:.5px solid var(--border);backdrop-filter:blur(14px);transition:background .32s;}
+.nl{display:flex;align-items:center;gap:26px;}
+.nlogo{display:flex;flex-direction:column;font-family:var(--fh);font-size:17px;font-weight:700;cursor:none;user-select:none;line-height:1.1;}
+.nlogo span{color:var(--g);}
+.nlogo small{font-size:9px;font-weight:400;color:var(--text3);letter-spacing:.14em;text-transform:uppercase;}
+.nlinks{display:flex;gap:2px;}
+.nlinks button{background:none;border:none;color:var(--text2);font-family:var(--fb);font-size:11.5px;font-weight:500;letter-spacing:.05em;padding:6px 11px;border-radius:6px;cursor:none;transition:all .18s;text-transform:uppercase;}
+.nlinks button:hover{color:var(--text);background:rgba(128,128,128,0.08);}
+.nlinks button.active{color:var(--g);}
+.nr{display:flex;align-items:center;gap:8px;}
+
+/* ══ LANG DROPDOWN ══ */
+.lw{position:relative;}
+.lbtn{display:flex;align-items:center;gap:5px;background:none;border:.5px solid var(--border2);color:var(--text2);font-family:var(--fb);font-size:11px;font-weight:600;letter-spacing:.08em;padding:6px 10px;border-radius:6px;cursor:none;transition:all .18s;text-transform:uppercase;}
+.lbtn:hover{color:var(--text);background:rgba(128,128,128,0.06);}
+.lbtn svg{width:10px;height:10px;fill:currentColor;transition:transform .2s;}
+.lw.open .lbtn svg{transform:rotate(180deg);}
+.lmenu{position:absolute;top:calc(100% + 7px);right:0;background:var(--bg2);border:.5px solid var(--border2);border-radius:var(--r);min-width:148px;box-shadow:var(--shadow);z-index:300;overflow:hidden;opacity:0;transform:translateY(-6px) scale(.97);pointer-events:none;transition:opacity .18s,transform .18s;}
+.lw.open .lmenu{opacity:1;transform:translateY(0) scale(1);pointer-events:all;}
+.lopt{display:flex;align-items:center;gap:10px;padding:9px 13px;font-size:13px;font-weight:500;color:var(--text2);cursor:none;transition:all .15s;}
+.lopt:hover{background:rgba(128,128,128,0.07);color:var(--text);}
+.lopt.active{color:var(--g);}
+
+/* ══ THEME TOGGLE ══ */
+.ttog{width:38px;height:22px;border-radius:11px;background:var(--bg3);border:.5px solid var(--border2);cursor:none;position:relative;transition:all .25s;flex-shrink:0;}
+.tknob{position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:var(--g);transition:transform .25s var(--ease);display:flex;align-items:center;justify-content:center;font-size:9px;}
+[data-theme="light"] .tknob{transform:translateX(16px);}
+
+/* ══ WALLET BTN ══ */
+.wbtn{background:transparent;border:1px solid var(--g);color:var(--g);font-family:var(--fb);font-size:11px;font-weight:600;letter-spacing:.08em;padding:7px 15px;border-radius:6px;cursor:none;transition:all .2s;text-transform:uppercase;white-space:nowrap;max-width:170px;overflow:hidden;text-overflow:ellipsis;}
+.wbtn:hover{background:var(--gd);}
+.wbtn.on{background:var(--gd);}
+
+/* ══ LAYOUT ══ */
+.page{display:none;padding-top:60px;min-height:100vh;}
+.page.active{display:block;}
+.con{max-width:1100px;margin:0 auto;padding:0 30px;}
+
+/* ══ HERO ══ */
+#page-home{position:relative;}
+.hero-bg{position:absolute;top:0;left:0;width:100%;height:100vh;pointer-events:none;z-index:0;overflow:hidden;}
+#hero-canvas{position:absolute;inset:0;width:100%;height:100%;}
+/* Gradiente de desvanecimiento: código visible a la derecha, invisible hacia el texto */
+.hero-bg::after{content:'';position:absolute;inset:0;background:
+  linear-gradient(to right, var(--bg) 30%, rgba(13,13,13,0.82) 58%, rgba(13,13,13,0.35) 100%),
+  linear-gradient(to bottom, var(--bg) 0%, transparent 8%, transparent 88%, var(--bg) 100%);
+  pointer-events:none;}
+[data-theme="light"] .hero-bg::after{background:
+  linear-gradient(to right, var(--bg) 30%, rgba(242,242,238,0.82) 58%, rgba(242,242,238,0.35) 100%),
+  linear-gradient(to bottom, var(--bg) 0%, transparent 8%, transparent 88%, var(--bg) 100%);}
+.hero{min-height:calc(100vh - 60px);display:flex;flex-direction:column;justify-content:center;padding:80px 30px 60px;max-width:1100px;margin:0 auto;position:relative;z-index:1;}
+.hlbl{font-size:11px;font-weight:600;letter-spacing:.18em;color:var(--text3);text-transform:uppercase;margin-bottom:26px;display:flex;align-items:center;gap:10px;opacity:0;animation:fu .7s .1s forwards;}
+.hlbl::before{content:'';display:block;width:22px;height:1px;background:var(--text3);}
+.hero h1{font-family:var(--fh);font-size:clamp(50px,8vw,94px);font-weight:800;line-height:1.0;letter-spacing:-.02em;opacity:0;animation:fu .7s .2s forwards;}
+.acc{color:var(--g);display:block;}
+.hdesc{margin-top:26px;max-width:490px;font-size:15px;color:var(--text2);line-height:1.8;opacity:0;animation:fu .7s .35s forwards;}
+.hact{display:flex;gap:12px;margin-top:38px;flex-wrap:wrap;opacity:0;animation:fu .7s .45s forwards;}
+@keyframes fu{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+
+/* ══ STATS ══ */
+.sbar{display:grid;grid-template-columns:repeat(4,1fr);margin-top:76px;border:.5px solid var(--border);border-radius:var(--r2);overflow:hidden;opacity:0;animation:fu .7s .6s forwards;}
+.sitem{background:var(--card-bg);padding:22px 26px;border-right:.5px solid var(--border);transition:all .22s var(--ease);position:relative;overflow:hidden;cursor:none;}
+.sitem::after{content:'';position:absolute;inset:0;background:var(--gd);opacity:0;transition:opacity .22s;}
+.sitem:hover::after{opacity:1;}
+.sitem:last-child{border-right:none;}
+.snum{font-family:var(--fh);font-size:34px;font-weight:800;color:var(--g);font-variant-numeric:tabular-nums;position:relative;z-index:1;}
+.slbl{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-top:2px;position:relative;z-index:1;}
+
+/* ══ BUTTONS ══ */
+.bpr{background:var(--g);color:#000;font-family:var(--fb);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:12px 26px;border:none;border-radius:var(--r);cursor:none;transition:all .2s;}
+.bpr:hover{background:var(--g2);transform:translateY(-2px);box-shadow:0 6px 22px var(--gg);}
+.bgh{background:transparent;color:var(--text2);font-family:var(--fb);font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:12px 26px;border:.5px solid var(--border2);border-radius:var(--r);cursor:none;transition:all .2s;}
+.bgh:hover{color:var(--text);border-color:var(--g);}
+.bap{background:var(--gd);border:1px solid var(--g);color:var(--g);font-family:var(--fb);font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:9px 20px;border-radius:var(--r);cursor:none;transition:all .18s;}
+.bap:hover{background:rgba(255,110,45,.18);transform:translateY(-1px);}
+.bre{background:rgba(255,68,68,.06);border:1px solid rgba(255,68,68,.28);color:var(--red);font-family:var(--fb);font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:9px 20px;border-radius:var(--r);cursor:none;transition:all .18s;}
+.bre:hover{background:rgba(255,68,68,.14);}
+
+/* ══ SECTION HEAD ══ */
+.sh{padding:52px 0 26px;display:flex;align-items:flex-end;justify-content:space-between;border-bottom:.5px solid var(--border);margin-bottom:28px;}
+.sh h2{font-family:var(--fh);font-size:25px;font-weight:700;}
+.sh span{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.12em;}
+
+/* ══ FILTERS ══ */
+.flt{display:flex;gap:7px;margin-bottom:26px;flex-wrap:wrap;align-items:center;}
+.flbl{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-right:4px;}
+.fb{background:var(--card-bg);border:.5px solid var(--border);color:var(--text2);font-family:var(--fb);font-size:11px;font-weight:500;letter-spacing:.04em;padding:5px 12px;border-radius:20px;cursor:none;transition:all .18s;text-transform:uppercase;}
+.fb:hover{border-color:var(--border2);color:var(--text);}
+.fb.active{background:var(--gd);border-color:var(--g);color:var(--g);}
+
+/* ══ PROJECT CARDS ══ */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(308px,1fr));gap:13px;}
+.pcard{background:var(--card-bg);border:.5px solid var(--border);border-radius:var(--r2);padding:22px;cursor:none;transition:border-color .22s,background .22s,transform .22s,box-shadow .22s;display:flex;flex-direction:column;opacity:0;transform:translateY(14px);}
+.pcard.rv{opacity:1;transform:translateY(0);}
+.pcard:hover{border-color:rgba(255,110,45,.35);background:var(--card-hover);transform:translateY(-3px);box-shadow:var(--ssm);}
+.ctop{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:11px;}
+.ca{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--g);background:var(--gd);padding:3px 9px;border-radius:4px;}
+.cs{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:4px;}
+.sp{background:rgba(245,166,35,.1);color:var(--amb);}
+.sa{background:rgba(255,110,45,.1);color:var(--g);}
+.sr{background:rgba(255,68,68,.1);color:var(--red);}
+.ctit{font-family:var(--fh);font-size:17px;font-weight:700;color:var(--text);margin-bottom:6px;line-height:1.2;}
+.cdesc{font-size:13px;color:var(--text2);line-height:1.6;flex:1;}
+.cft{display:flex;align-items:center;justify-content:space-between;margin-top:17px;padding-top:13px;border-top:.5px solid var(--border);}
+.cau{display:flex;align-items:center;gap:7px;}
+/* Solana wallet display */
+.sol-av{width:26px;height:26px;border-radius:6px;background:linear-gradient(135deg,rgba(255,110,45,0.2),rgba(74,158,255,0.2));border:1px solid var(--g);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--g);flex-shrink:0;font-family:monospace;}
+.sol-addr{font-size:11px;color:var(--text2);font-family:monospace;letter-spacing:.02em;}
+.sbdg{font-size:11px;font-weight:700;color:var(--g);background:var(--gd);padding:3px 8px;border-radius:4px;}
+
+/* ══ SOL BADGE ══ */
+.sol-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(153,69,255,0.08);border:.5px solid rgba(153,69,255,0.25);color:#9945FF;font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;letter-spacing:.04em;}
+.sol-badge::before{content:'â—Ž';font-size:11px;}
+
+/* ══ SECURITY ══ */
+.secgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(254px,1fr));gap:12px;margin-bottom:44px;}
+.secc{background:var(--card-bg);border:.5px solid var(--border);border-radius:var(--r2);padding:19px;transition:all .2s;}
+.secc:hover{border-color:var(--g);transform:translateY(-2px);box-shadow:var(--ssm);}
+.sico{width:34px;height:34px;border-radius:8px;background:var(--gd);border:1px solid rgba(255,110,45,.2);display:flex;align-items:center;justify-content:center;margin-bottom:11px;}
+.sico svg{width:16px;height:16px;stroke:var(--g);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.secc h3{font-size:13px;font-weight:600;color:var(--text);margin-bottom:5px;}
+.secc p{font-size:12px;color:var(--text2);line-height:1.6;}
+.stag{display:inline-block;margin-top:9px;font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--g);border:.5px solid rgba(255,110,45,.3);padding:2px 7px;border-radius:4px;}
+.rsn{background:var(--bg2);border:.5px solid var(--border);border-left:2px solid var(--g);border-radius:0 var(--r) var(--r) 0;padding:11px 15px;margin:10px 0;font-family:monospace;font-size:11.5px;color:#ffb98f;line-height:1.9;overflow-x:auto;}
+[data-theme="light"] .rsn{color:#0a5c38;background:#f0faf4;}
+.rsn .kw{color:#ff9d4d;}.rsn .at{color:var(--g);}.rsn .st{color:#f5c542;}.rsn .cm{color:var(--text3);}
+[data-theme="light"] .rsn .kw{color:#c24d00;}[data-theme="light"] .rsn .st{color:#8a6200;}
+
+/* ══ LEVEL TABLE ══ */
+.ltab{width:100%;border-collapse:collapse;margin-bottom:44px;font-size:13px;}
+.ltab th{text-align:left;padding:9px 13px;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);border-bottom:.5px solid var(--border);}
+.ltab td{padding:12px 13px;border-bottom:.5px solid var(--border);color:var(--text2);}
+.ltab tr:hover td{background:var(--bg3);}
+.lbadge{display:inline-flex;align-items:center;justify-content:center;width:27px;height:27px;border-radius:6px;font-size:13px;font-weight:700;color:#000;background:var(--g);}
+
+/* ══ FORM ══ */
+.fsec{max-width:640px;margin:0 auto;padding:0 0 60px;}
+.fg{margin-bottom:17px;}
+.fg label{display:block;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:7px;}
+.fg input,.fg textarea,.fg select{width:100%;background:var(--inp);border:.5px solid var(--border2);border-radius:var(--r);color:var(--text);font-family:var(--fb);font-size:14px;padding:11px 13px;outline:none;transition:all .18s;appearance:none;}
+.fg input:focus,.fg textarea:focus,.fg select:focus{border-color:var(--g);box-shadow:0 0 0 3px var(--gd);}
+.fg input::placeholder,.fg textarea::placeholder{color:var(--text3);}
+.fg textarea{resize:vertical;min-height:94px;}
+.fhint{font-size:11px;color:var(--text3);margin-top:5px;}
+.err{font-size:11px;color:var(--red);margin-top:4px;display:none;}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.fcnt{float:right;}
+.fsub{background:var(--g);color:#000;font-family:var(--fh);font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:13px 30px;border:none;border-radius:var(--r);cursor:none;transition:all .2s;width:100%;margin-top:8px;}
+.fsub:hover{background:var(--g2);transform:translateY(-1px);box-shadow:0 6px 22px var(--gg);}
+
+/* ══ VALIDATE ══ */
+.vcrd{background:var(--card-bg);border:.5px solid var(--border);border-radius:var(--r2);padding:24px;margin-bottom:13px;transition:all .2s;}
+.vcrd:hover{border-color:var(--border2);}
+.vcrd h3{font-family:var(--fh);font-size:18px;font-weight:700;margin-bottom:5px;}
+.vact{display:flex;gap:8px;margin-top:17px;flex-wrap:wrap;align-items:center;}
+/* Rejection categories from contract (u8: 1,2,3) */
+.cat-sel{background:var(--inp);border:.5px solid var(--border2);border-radius:var(--r);color:var(--text);font-family:var(--fb);font-size:12px;padding:8px 12px;outline:none;cursor:none;transition:border-color .18s;display:none;}
+.cat-sel:focus{border-color:var(--red);}
+
+/* ══ MENTORS ══ */
+.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(262px,1fr));gap:13px;}
+.mcrd{background:var(--card-bg);border:.5px solid var(--border);border-radius:var(--r2);padding:21px;transition:all .2s;}
+.mcrd:hover{border-color:var(--g);transform:translateY(-2px);box-shadow:var(--ssm);}
+.mtop{display:flex;align-items:center;gap:12px;margin-bottom:11px;}
+.mav{width:44px;height:44px;border-radius:8px;background:linear-gradient(135deg,rgba(255,110,45,0.15),rgba(74,158,255,0.12));border:1px solid var(--g);display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:16px;font-weight:800;color:var(--g);}
+.mname{font-size:15px;font-weight:600;color:var(--text);}
+.msc{font-size:11px;color:var(--text3);font-family:monospace;}
+.mscore{font-size:12px;color:var(--g);margin-top:1px;}
+.mareas{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px;}
+.atag{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;background:var(--bg2);border:.5px solid var(--border2);color:var(--text2);padding:3px 7px;border-radius:4px;}
+.breq{width:100%;background:transparent;border:.5px solid var(--g);color:var(--g);font-family:var(--fb);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:8px;border-radius:var(--r);cursor:none;transition:all .18s;}
+.breq:hover{background:var(--gd);transform:translateY(-1px);}
+/* Mentor requirement note */
+.mentor-req{font-size:11px;color:var(--text3);margin-top:6px;text-align:center;}
+
+/* ══ PROFILE ══ */
+.ph{display:flex;align-items:flex-start;gap:24px;padding:46px 0 32px;border-bottom:.5px solid var(--border);margin-bottom:34px;}
+
+/* Avatar — foto/NFT */
+.pav-wrap{position:relative;flex-shrink:0;cursor:none;}
+.pav{width:88px;height:88px;border-radius:16px;background:var(--bg3);border:2px solid var(--g);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;transition:border-color .2s;}
+.pav img{width:100%;height:100%;object-fit:cover;border-radius:14px;}
+.pav-edit{position:absolute;inset:0;border-radius:16px;background:rgba(0,0,0,0.55);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;opacity:0;transition:opacity .2s;border:none;cursor:none;width:100%;}
+.pav-wrap:hover .pav-edit{opacity:1;}
+.pav-edit-icon{font-size:18px;}
+.pav-edit-lbl{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#fff;}
+
+/* Avatar modal */
+.av-modal{display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,0.72);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:20px;}
+.av-modal.open{display:flex;}
+.av-box{background:var(--bg2);border:.5px solid var(--border2);border-radius:var(--r2);width:100%;max-width:460px;padding:28px;animation:mi .22s var(--ease);}
+.av-box h3{font-family:var(--fh);font-size:18px;font-weight:700;margin-bottom:6px;}
+.av-box p{font-size:13px;color:var(--text2);margin-bottom:20px;line-height:1.6;}
+.av-tabs{display:flex;gap:6px;margin-bottom:18px;}
+.av-tab{background:var(--bg3);border:.5px solid var(--border2);color:var(--text3);font-family:var(--fb);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:6px 14px;border-radius:6px;cursor:none;transition:all .18s;}
+.av-tab.active{background:var(--gd);border-color:var(--g);color:var(--g);}
+.av-panel{display:none;}.av-panel.active{display:block;}
+/* Galería */
+.av-upload-zone{border:1.5px dashed var(--border2);border-radius:var(--r2);padding:32px;text-align:center;cursor:none;transition:border-color .2s;position:relative;}
+.av-upload-zone:hover{border-color:var(--g);}
+.av-upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.av-upload-icon{font-size:28px;margin-bottom:10px;}
+.av-upload-zone h4{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px;}
+.av-upload-zone p{font-size:12px;color:var(--text3);margin-bottom:0;}
+/* NFT */
+.av-nft-row{display:flex;gap:8px;align-items:flex-end;margin-bottom:12px;}
+.av-nft-row input{flex:1;background:var(--inp);border:.5px solid var(--border2);border-radius:var(--r);color:var(--text);font-family:monospace;font-size:12px;padding:10px 12px;outline:none;transition:border-color .18s;}
+.av-nft-row input:focus{border-color:var(--g);}
+.av-nft-row input::placeholder{color:var(--text3);font-size:11px;}
+.av-nft-preview{width:72px;height:72px;border-radius:10px;background:var(--bg3);border:.5px solid var(--border2);overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;color:var(--text3);transition:all .2s;}
+.av-nft-preview img{width:100%;height:100%;object-fit:cover;}
+.av-nft-info{font-size:11px;color:var(--text3);margin-bottom:14px;min-height:16px;font-family:monospace;}
+.av-nft-info.ok{color:var(--g);}
+.av-nft-info.err{color:var(--red);}
+.av-actions{display:flex;gap:8px;margin-top:4px;}
+.av-cancel{background:none;border:.5px solid var(--border2);color:var(--text2);font-family:var(--fb);font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:10px 18px;border-radius:var(--r);cursor:none;transition:all .18s;flex:1;}
+.av-cancel:hover{border-color:var(--border2);color:var(--text);}
+.av-save{background:var(--g);color:#000;font-family:var(--fb);font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:10px 18px;border-radius:var(--r);cursor:none;transition:all .18s;flex:2;}
+.av-save:hover{background:var(--g2);box-shadow:0 4px 18px var(--gg);}
+
+/* ══ ACTIVITY / COMMIT GRID ══ */
+.activity-wrap{margin-bottom:36px;}
+.activity-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.activity-header h3{font-family:var(--fh);font-size:16px;font-weight:700;}
+.activity-legend{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text3);}
+.activity-legend span{display:inline-block;width:11px;height:11px;border-radius:2px;}
+.activity-months{display:flex;gap:0;margin-bottom:4px;padding-left:28px;}
+.activity-month{font-size:10px;color:var(--text3);letter-spacing:.04em;flex:1;text-align:left;}
+.activity-grid-wrap{display:flex;gap:4px;align-items:flex-start;}
+.activity-days{display:flex;flex-direction:column;gap:3px;padding-top:2px;}
+.activity-day-lbl{font-size:9px;color:var(--text3);height:13px;line-height:13px;letter-spacing:.04em;width:24px;}
+.activity-grid{display:grid;grid-template-rows:repeat(7,13px);grid-auto-flow:column;gap:3px;flex:1;}
+.ac{width:13px;height:13px;border-radius:3px;background:var(--bg3);border:.5px solid var(--border);transition:all .18s;cursor:none;position:relative;}
+.ac:hover{transform:scale(1.35);z-index:2;}
+.ac[data-v="0"]{background:var(--bg3);border-color:var(--border);}
+.ac[data-v="1"]{background:rgba(255,110,45,0.22);border-color:rgba(255,110,45,0.3);}
+.ac[data-v="2"]{background:rgba(255,110,45,0.44);border-color:rgba(255,110,45,0.5);}
+.ac[data-v="3"]{background:rgba(255,110,45,0.68);border-color:rgba(255,110,45,0.7);}
+.ac[data-v="4"]{background:#ff6e2d;border-color:#ff6e2d;box-shadow:0 0 6px rgba(255,110,45,0.5);}
+/* Tooltip de celda */
+.ac-tip{position:absolute;bottom:calc(100% + 7px);left:50%;transform:translateX(-50%);background:var(--bg2);border:.5px solid var(--border2);color:var(--text);font-size:11px;white-space:nowrap;padding:5px 10px;border-radius:6px;pointer-events:none;opacity:0;transition:opacity .14s;z-index:10;box-shadow:var(--shadow);}
+.ac:hover .ac-tip{opacity:1;}
+/* Streak badge */
+.streak-badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,rgba(255,110,45,0.12),rgba(74,158,255,0.08));border:.5px solid rgba(255,110,45,0.3);border-radius:20px;padding:5px 12px;font-size:12px;font-weight:600;color:var(--g);}
+.streak-fire{font-size:14px;}
+
+.pi h2{font-family:var(--fh);font-size:23px;font-weight:700;}
+.pwallet{font-size:12px;color:var(--text3);margin:3px 0 4px;font-family:monospace;letter-spacing:.02em;word-break:break-all;}
+.pnet{font-size:11px;color:#9945FF;font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:4px;}
+.pnet::before{content:'â—Ž';}
+.pbio{font-size:13px;color:var(--text2);max-width:440px;line-height:1.7;}
+.pstats{display:flex;gap:26px;margin-top:16px;flex-wrap:wrap;}
+.psnum{font-family:var(--fh);font-size:23px;font-weight:700;color:var(--g);font-variant-numeric:tabular-nums;cursor:none;}
+.pslbl{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;}
+.brow{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:34px;}
+.bpil{background:var(--gd);border:1px solid rgba(255,110,45,.25);color:var(--g);font-size:12px;font-weight:600;padding:5px 12px;border-radius:20px;letter-spacing:.04em;text-transform:uppercase;}
+.lbwrap{margin-bottom:30px;}
+.lbtrk{height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;margin:6px 0 4px;}
+.lbfll{height:100%;background:var(--g);border-radius:2px;transition:width .8s var(--ease);width:0%;}
+
+/* ══ NOTIFS ══ */
+.ni{display:flex;align-items:flex-start;gap:13px;padding:15px 16px;border-bottom:.5px solid var(--border);transition:background .15s;border-radius:var(--r);}
+.ni:hover{background:var(--bg3);}
+.ndot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0;}
+.ndot.g{background:var(--g);}.ndot.r{background:var(--red);}.ndot.a{background:var(--amb);}.ndot.b{background:var(--blue);}
+.ni h4{font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px;}
+.ni p{font-size:12px;color:var(--text2);}
+.ntime{font-size:11px;color:var(--text3);margin-left:auto;white-space:nowrap;padding-top:2px;}
+
+/* ══ MODAL ══ */
+.mover{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.7);backdrop-filter:blur(5px);align-items:center;justify-content:center;padding:22px;}
+.mover.open{display:flex;}
+.modal{background:var(--bg2);border:.5px solid var(--border2);border-radius:var(--r2);max-width:560px;width:100%;max-height:83vh;overflow-y:auto;padding:28px;animation:mi .22s var(--ease);}
+@keyframes mi{from{opacity:0;transform:scale(.96) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.mhd{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;}
+.mhd h3{font-family:var(--fh);font-size:20px;font-weight:700;padding-right:12px;}
+.mcls{background:none;border:none;color:var(--text3);font-size:18px;cursor:none;line-height:1;transition:color .14s;flex-shrink:0;}
+.mcls:hover{color:var(--text);}
+.mf{margin-bottom:13px;}
+.mf label{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);display:block;margin-bottom:3px;}
+.mf p{font-size:13px;color:var(--text2);line-height:1.6;}
+.mvld{margin-top:20px;padding-top:16px;border-top:.5px solid var(--border);}
+.vitem{display:flex;gap:8px;padding:10px 0;border-bottom:.5px solid var(--border);}
+.vcmt{font-size:13px;color:var(--text2);}
+.vmeta{font-size:11px;color:var(--text3);margin-top:2px;font-family:monospace;}
+
+/* ══ TOAST ══ */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--bg2);border:.5px solid var(--g);color:var(--text);font-size:13px;font-weight:500;padding:11px 21px;border-radius:var(--r);z-index:999;opacity:0;transition:all .26s var(--ease);pointer-events:none;box-shadow:0 0 22px var(--gg);white-space:nowrap;}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ══ REVEAL ══ */
+.rv0{opacity:0;transform:translateY(18px);transition:opacity .52s var(--ease),transform .52s var(--ease);}
+.rv0.vis{opacity:1;transform:translateY(0);}
+
+/* ══ SOLANA SPECIFIC ══ */
+.devnet-chip{display:inline-flex;align-items:center;gap:5px;background:rgba(153,69,255,0.08);border:.5px solid rgba(153,69,255,0.3);color:#9945FF;font-size:10px;font-weight:600;padding:3px 9px;border-radius:4px;letter-spacing:.06em;text-transform:uppercase;}
+.devnet-chip::before{content:'';width:6px;height:6px;border-radius:50%;background:#9945FF;flex-shrink:0;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.anchor-tag{font-size:10px;color:var(--text3);font-family:monospace;background:var(--bg3);padding:2px 7px;border-radius:4px;letter-spacing:.04em;}
+
+/* ══ WALLET PANEL (slide-over derecho) ══ */
+#wpanel{position:fixed;top:0;right:0;height:100vh;width:360px;max-width:95vw;z-index:500;background:var(--bg2);border-left:.5px solid var(--border2);box-shadow:-8px 0 40px rgba(0,0,0,0.45);transform:translateX(100%);transition:transform .3s var(--ease);display:flex;flex-direction:column;overflow:hidden;}
+#wpanel.open{transform:translateX(0);}
+.wpanel-overlay{position:fixed;inset:0;z-index:499;background:rgba(0,0,0,0.45);backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .3s;}
+.wpanel-overlay.open{opacity:1;pointer-events:all;}
+.wph{padding:20px 22px 16px;border-bottom:.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.wph h3{font-family:var(--fh);font-size:16px;font-weight:700;}
+.wpclose{background:none;border:none;color:var(--text3);font-size:18px;cursor:none;transition:color .14s;line-height:1;}
+.wpclose:hover{color:var(--text);}
+.wpcontent{flex:1;overflow-y:auto;padding:22px;}
+/* Not-connected state */
+.wp-noconn{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:18px;text-align:center;padding:40px 24px;}
+.wp-noconn .sol-logo{width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,rgba(153,69,255,0.18),rgba(255,110,45,0.12));border:1px solid rgba(153,69,255,0.3);display:flex;align-items:center;justify-content:center;font-size:26px;}
+.wp-noconn h4{font-family:var(--fh);font-size:18px;font-weight:700;}
+.wp-noconn p{font-size:13px;color:var(--text2);line-height:1.7;max-width:260px;}
+.wp-wallets{display:flex;flex-direction:column;gap:8px;width:100%;}
+.wp-wallet-btn{display:flex;align-items:center;gap:12px;background:var(--bg3);border:.5px solid var(--border2);border-radius:var(--r);padding:12px 14px;cursor:none;transition:all .18s;width:100%;}
+.wp-wallet-btn:hover{border-color:var(--g);background:var(--card-hover);}
+.wp-wallet-btn .wico{width:32px;height:32px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.wp-wallet-btn .wname{font-size:13px;font-weight:600;color:var(--text);text-align:left;}
+.wp-wallet-btn .wdesc{font-size:11px;color:var(--text3);}
+/* Connected state */
+.wp-avatar{width:64px;height:64px;border-radius:14px;background:linear-gradient(135deg,rgba(255,110,45,0.2),rgba(74,158,255,0.15));border:2px solid var(--g);display:flex;align-items:center;justify-content:center;font-family:monospace;font-size:11px;font-weight:700;color:var(--g);text-align:center;word-break:break-all;padding:4px;flex-shrink:0;}
+.wp-addr{font-family:monospace;font-size:11px;color:var(--text3);word-break:break-all;margin:8px 0 4px;line-height:1.5;}
+.wp-copy{background:none;border:.5px solid var(--border2);color:var(--text3);font-family:var(--fb);font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:4px;cursor:none;transition:all .15s;}
+.wp-copy:hover{color:var(--g);border-color:var(--g);}
+.wp-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:18px 0;}
+.wp-stat{background:var(--bg3);border:.5px solid var(--border);border-radius:var(--r);padding:12px 14px;}
+.wp-snum{font-family:var(--fh);font-size:22px;font-weight:800;color:var(--g);}
+.wp-slbl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-top:2px;}
+.wp-level{background:var(--gd);border:.5px solid rgba(255,110,45,.25);border-radius:var(--r);padding:12px 14px;margin-bottom:14px;}
+.wp-lbar-track{height:3px;background:var(--bg3);border-radius:2px;overflow:hidden;margin:6px 0 4px;}
+.wp-lbar-fill{height:100%;background:var(--g);border-radius:2px;transition:width .8s var(--ease);}
+.wp-badges{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;}
+.wp-section-title{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin:14px 0 8px;}
+.wp-actions{display:flex;flex-direction:column;gap:6px;margin-top:6px;}
+.wp-action-btn{display:flex;align-items:center;gap:10px;background:var(--bg3);border:.5px solid var(--border);border-radius:var(--r);padding:11px 14px;cursor:none;transition:all .18s;width:100%;color:var(--text2);font-size:13px;font-weight:500;}
+.wp-action-btn:hover{border-color:var(--border2);color:var(--text);background:var(--card-hover);}
+.wp-action-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+.wp-disconnect{width:100%;background:rgba(255,68,68,0.06);border:.5px solid rgba(255,68,68,0.22);color:var(--red);font-family:var(--fb);font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:11px;border-radius:var(--r);cursor:none;transition:all .18s;margin-top:14px;}
+.wp-disconnect:hover{background:rgba(255,68,68,0.14);}
+/* Onboarding chip */
+.onboard-chip{display:inline-flex;align-items:center;gap:6px;background:rgba(153,69,255,0.1);border:.5px solid rgba(153,69,255,0.3);color:#9945FF;font-size:11px;font-weight:600;padding:4px 10px;border-radius:4px;letter-spacing:.04em;margin-bottom:10px;}
+/* Aptitudes section en perfil */
+.apt-grid{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:28px;}
+.apt-tag{background:var(--bg3);border:.5px solid var(--border2);color:var(--text2);font-size:11px;font-weight:600;padding:5px 12px;border-radius:6px;letter-spacing:.04em;text-transform:uppercase;display:flex;align-items:center;gap:6px;}
+.apt-tag span{font-size:10px;color:var(--g);}
+/* Badge Case en perfil */
+.badge-case-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-bottom:30px;}
+.badge-case-card{background:var(--card-bg);border:.5px solid var(--border);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:8px;transition:all .18s;}
+.badge-case-card:hover{border-color:var(--g);transform:translateY(-2px);box-shadow:var(--ssm);}
+.badge-case-top{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.badge-case-pill{display:inline-flex;align-items:center;gap:6px;background:var(--gd);border:1px solid rgba(255,110,45,.35);color:var(--g);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:999px;}
+.badge-case-title{font-size:14px;font-weight:700;color:var(--text);}
+.badge-case-meta{font-size:11px;color:var(--text3);font-family:monospace;}
+/* Tabs en "Mis proyectos" */
+.ptabs{display:flex;gap:4px;margin-bottom:18px;}
+.ptab{background:var(--bg3);border:.5px solid var(--border);color:var(--text3);font-family:var(--fb);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:6px 14px;border-radius:6px;cursor:none;transition:all .18s;}
+.ptab:hover{color:var(--text);border-color:var(--border2);}
+.ptab.active{background:var(--gd);border-color:var(--g);color:var(--g);}
+.ptab .cnt{display:inline-block;background:rgba(255,110,45,0.15);color:var(--g);font-size:10px;padding:1px 5px;border-radius:3px;margin-left:4px;}
+.ptab.red-tab.active{background:rgba(255,68,68,.08);border-color:rgba(255,68,68,.3);color:var(--red);}
+.ptab.red-tab .cnt{background:rgba(255,68,68,.12);color:var(--red);}
+.ptab.amb-tab.active{background:rgba(245,166,35,.08);border-color:rgba(245,166,35,.3);color:var(--amb);}
+.ptab.amb-tab .cnt{background:rgba(245,166,35,.12);color:var(--amb);}
+/* Bio editable */
+.bio-edit{width:100%;background:var(--inp);border:.5px solid var(--border2);border-radius:var(--r);color:var(--text);font-family:var(--fb);font-size:13px;padding:10px 12px;outline:none;resize:none;min-height:70px;transition:border-color .18s;margin-bottom:4px;}
+.bio-edit:focus{border-color:var(--g);}
+/* Filtro estado */
+.flt-sep{width:1px;height:18px;background:var(--border2);align-self:center;margin:0 2px;}
+
+::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--sbr);border-radius:3px;}
+@media(max-width:700px){nav{padding:0 14px;}.nlinks{display:none;}.con{padding:0 15px;}.hero{padding:60px 15px 40px;}.sbar{grid-template-columns:1fr 1fr;}.frow{grid-template-columns:1fr;}.ph{flex-direction:column;}#wpanel{width:100%;max-width:100vw;}}
+</style>
+</head>
+<body>
+<div id="cg"></div><div id="cd"></div>
+<div id="spb"></div>
+<div id="toast"></div>
+<div class="mover" id="pm"><div class="modal"><div class="mhd"><h3 id="mtit">—</h3><button class="mcls" onclick="cm()">✕</button></div><div id="mbdy"></div></div></div>
+
+<!-- ═══ WALLET PANEL ═══ -->
+<div class="wpanel-overlay" id="wpo" onclick="closeWP()"></div>
+<div id="wpanel">
+  <div class="wph">
+    <h3 id="wptitle">Conectar Wallet</h3>
+    <button class="wpclose" onclick="closeWP()">✕</button>
+  </div>
+  <div class="wpcontent" id="wpc"></div>
+</div>
+
+
+<nav>
+  <div class="nl">
+    <div class="nlogo" onclick="go('home')">
+      <div><span>Skill</span>Proof <small style="display:inline;font-size:9px;letter-spacing:.1em;color:var(--text3)">DAO</small></div>
+      <small>Anchor · Solana Devnet</small>
+    </div>
+    <div class="nlinks">
+      <button onclick="go('home')"     id="n-home"     class="active" data-k="nav.home"></button>
+      <button onclick="go('projects')" id="n-projects" data-k="nav.projects"></button>
+      <button onclick="go('validate')" id="n-validate" data-k="nav.validate"></button>
+      <button onclick="go('mentors')"  id="n-mentors"  data-k="nav.mentors"></button>
+      <button onclick="go('profile')"  id="n-profile"  data-k="nav.profile"></button>
+      <button onclick="go('security')" id="n-security" data-k="nav.contracts"></button>
+    </div>
+  </div>
+  <div class="nr">
+    <div class="lw" id="lw">
+      <button class="lbtn" onclick="toggleL()">
+        <span id="lflag">🇪🇸</span><span id="lcode">ES</span>
+        <svg viewBox="0 0 10 6"><path d="M0 0l5 6 5-6z"/></svg>
+      </button>
+      <div class="lmenu" id="lmenu">
+        <div class="lopt active" onclick="setL('es')" data-l="es">🇪🇸 Español</div>
+        <div class="lopt" onclick="setL('en')" data-l="en">🇺🇸 English</div>
+        <div class="lopt" onclick="setL('pt')" data-l="pt">🇧🇷 Português</div>
+        <div class="lopt" onclick="setL('zh')" data-l="zh">🇨🇳 中文</div>
+      </div>
+    </div>
+    <button class="ttog" onclick="toggleT()"><div class="tknob" id="tk">🌙</div></button>
+    <button class="wbtn" id="wb" onclick="openWP()" data-k="nav.connect"></button>
+  </div>
+</nav>
+
+<!-- ═══ HOME ═══ -->
+<div id="page-home" class="page active">
+  <div class="hero-bg"><canvas id="hero-canvas"></canvas></div>
+  <div class="hero">
+    <p class="hlbl" data-k="hero.label"></p>
+    <h1 data-kh="hero.h1"></h1>
+    <p class="hdesc" data-k="hero.desc"></p>
+    <div class="hact">
+      <button class="bpr" onclick="go('upload');t(T('toast.upload'))" data-k="hero.cta1"></button>
+      <button class="bgh" onclick="go('projects')" data-k="hero.cta2"></button>
+    </div>
+    <div class="sbar">
+      <div class="sitem"><div class="snum" data-c="247" id="s0">0</div><div class="slbl" data-k="stats.projects"></div></div>
+      <div class="sitem"><div class="snum" data-c="1083" id="s1">0</div><div class="slbl" data-k="stats.validations"></div></div>
+      <div class="sitem"><div class="snum" data-c="189" id="s2">0</div><div class="slbl" data-k="stats.badges"></div></div>
+      <div class="sitem"><div class="snum" data-c="34" id="s3">0</div><div class="slbl" data-k="stats.mentors"></div></div>
+    </div>
+  </div>
+  <div class="con">
+    <div class="sh rv0"><h2 data-k="home.feed"></h2><span data-k="home.recent"></span></div>
+    <div class="flt rv0">
+      <span class="flbl" data-k="filter.area"></span>
+      <button class="fb active" onclick="fc(this,'all','hg','area')">All</button>
+      <button class="fb" onclick="fc(this,'Blockchain','hg','area')">Blockchain</button>
+      <button class="fb" onclick="fc(this,'Frontend','hg','area')">Frontend</button>
+      <button class="fb" onclick="fc(this,'Backend','hg','area')">Backend</button>
+      <button class="fb" onclick="fc(this,'IA','hg','area')">IA / ML</button>
+      <div class="flt-sep"></div>
+      <span class="flbl" data-k="filter.status"></span>
+      <button class="fb active" onclick="fc(this,'all','hg','status')">All</button>
+      <button class="fb" onclick="fc(this,'0','hg','status')" data-k="filter.pending"></button>
+      <button class="fb" onclick="fc(this,'1','hg','status')" data-k="filter.approved"></button>
+    </div>
+    <div class="pgrid" id="hg"></div>
+    <div style="height:60px"></div>
+  </div>
+</div>
+
+<!-- ═══ PROJECTS ═══ -->
+<div id="page-projects" class="page">
+  <div class="con">
+    <div class="sh rv0"><h2 data-k="projects.title"></h2><span id="pcnt">—</span></div>
+    <div class="flt rv0">
+      <span class="flbl" data-k="filter.area"></span>
+      <button class="fb active" onclick="fc(this,'all','pg','area')">All</button>
+      <button class="fb" onclick="fc(this,'Blockchain','pg','area')">Blockchain</button>
+      <button class="fb" onclick="fc(this,'Frontend','pg','area')">Frontend</button>
+      <button class="fb" onclick="fc(this,'Backend','pg','area')">Backend</button>
+      <button class="fb" onclick="fc(this,'IA','pg','area')">IA / ML</button>
+      <div class="flt-sep"></div>
+      <span class="flbl" data-k="filter.status"></span>
+      <button class="fb active" onclick="fc(this,'all','pg','status')">All</button>
+      <button class="fb" onclick="fc(this,'0','pg','status')" data-k="filter.pending"></button>
+      <button class="fb" onclick="fc(this,'1','pg','status')" data-k="filter.approved"></button>
+      <button class="fb" onclick="fc(this,'2','pg','status')" data-k="filter.rejected"></button>
+    </div>
+    <div class="pgrid" id="pg"></div>
+    <div style="height:60px"></div>
+  </div>
+</div>
+
+<!-- ═══ UPLOAD ═══ -->
+<div id="page-upload" class="page">
+  <div class="con">
+    <div class="sh rv0">
+      <div>
+        <h2 data-k="upload.title"></h2>
+        <div style="margin-top:6px;display:flex;gap:8px;align-items:center">
+          <span class="devnet-chip">Solana Devnet</span>
+          <span class="anchor-tag">submit_project()</span>
+        </div>
+      </div>
+      <span>Contrato 2 — ProjectAccount</span>
+    </div>
+    <div class="fsec rv0">
+      <p style="font-size:13px;color:var(--text2);margin-bottom:24px;line-height:1.75" data-k="upload.hint"></p>
+      <div class="frow">
+        <div class="fg">
+          <label data-k="upload.name"> <span class="fcnt" id="cn">0/100</span></label>
+          <input type="text" id="fn" maxlength="100" data-kp="upload.name_ph" oninput="uc('fn','cn',100)"/>
+          <p class="fhint">require!(nombre.len() ≤ 100)</p>
+        </div>
+        <div class="fg">
+          <label data-k="upload.area"> <span class="fcnt" id="carea">0/50</span></label>
+          <select id="fa" onchange="uc2('fa','carea',50)">
+            <option value="">—</option>
+            <option>Blockchain</option><option>Frontend</option>
+            <option>Backend</option><option>IA / ML</option>
+            <option>Mobile</option><option>DevOps</option>
+            <option>Smart Contracts</option>
+          </select>
+          <p class="fhint">require!(area.len() ≤ 50)</p>
+        </div>
+      </div>
+      <div class="fg">
+        <label data-k="upload.desc"> <span class="fcnt" id="cd">0/500</span></label>
+        <textarea id="fd" maxlength="500" data-kp="upload.desc_ph" oninput="uc('fd','cd',500)"></textarea>
+        <p class="fhint">require!(descripcion.len() ≤ 500)</p>
+      </div>
+      <div class="fg">
+        <label data-k="upload.evidence"> <span class="fcnt" id="ce">0/200</span></label>
+        <input type="url" id="fe" maxlength="200" data-kp="upload.evidence_ph" oninput="uc('fe','ce',200)"/>
+        <p class="fhint">require!(evidencia.len() ≤ 200)</p>
+      </div>
+      <div style="background:var(--bg3);border:.5px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:18px;font-size:12px;color:var(--text2);line-height:1.7">
+        <span style="color:var(--g);font-weight:600;display:block;margin-bottom:4px" data-k="upload.approval_rule"></span>
+        <span data-k="upload.approval_detail"></span>
+      </div>
+      <button class="fsub" onclick="sub()" data-k="upload.submit"></button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ VALIDATE ═══ -->
+<div id="page-validate" class="page">
+  <div class="con">
+    <div class="sh rv0">
+      <div>
+        <h2 data-k="validate.title"></h2>
+        <div style="margin-top:6px;display:flex;gap:8px;align-items:center">
+          <span class="devnet-chip">Solana Devnet</span>
+          <span class="anchor-tag">validate_project(aprobado, categoria_rechazo: u8, comentario)</span>
+        </div>
+      </div>
+      <span>Contrato 3 — ValidationAccount</span>
+    </div>
+    <div class="rv0" style="background:var(--bg3);border:.5px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:20px;font-size:12px;color:var(--text2);line-height:1.7">
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px">
+        <div><span style="color:var(--g);font-weight:600">require!</span> score ≥ 50</div>
+        <div><span style="color:var(--g);font-weight:600">require!</span> validator ≠ project.author</div>
+        <div><span style="color:var(--g);font-weight:600">require!</span> project.estado == 0 (pending)</div>
+        <div><span style="color:var(--amb);font-weight:600">if rejected:</span> categoria_rechazo ∈ {1,2,3}</div>
+      </div>
+    </div>
+    <p class="rv0" style="font-size:13px;color:var(--text2);margin-bottom:20px" data-k="validate.hint"></p>
+    <div id="vl"></div><div style="height:60px"></div>
+  </div>
+</div>
+
+<!-- ═══ MENTORS ═══ -->
+<div id="page-mentors" class="page">
+  <div class="con">
+    <div class="sh rv0">
+      <div>
+        <h2 data-k="mentors.title"></h2>
+        <div style="margin-top:6px;display:flex;gap:8px;align-items:center">
+          <span class="devnet-chip">Solana Devnet</span>
+          <span class="anchor-tag">request_mentoring() — require!(proyecto.estado == 2)</span>
+        </div>
+      </div>
+      <span>Contrato 6 — MentoringAccount</span>
+    </div>
+    <div class="rv0" style="background:rgba(255,68,68,0.05);border:.5px solid rgba(255,68,68,0.2);border-radius:var(--r);padding:12px 16px;margin-bottom:20px;font-size:12px;color:var(--text2)">
+      <span style="color:var(--red);font-weight:600" data-k="mentors.restriction"></span>
+    </div>
+    <p class="rv0" style="font-size:13px;color:var(--text2);margin-bottom:24px" data-k="mentors.hint"></p>
+    <div class="mgrid" id="mg"></div><div style="height:60px"></div>
+  </div>
+</div>
+
+<!-- ═══ AVATAR MODAL ═══ -->
+<div class="av-modal" id="avModal">
+  <div class="av-box">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+      <h3>Cambiar foto de perfil</h3>
+      <button class="mcls" onclick="closeAvModal()">✕</button>
+    </div>
+    <p id="avModalDesc">Sube una foto desde tu galería o usa la imagen de un NFT en Solana pegando su dirección de mint.</p>
+    <div class="av-tabs">
+      <button class="av-tab active" id="avTab0" onclick="switchAvTab(0)">📁 Galería</button>
+      <button class="av-tab" id="avTab1" onclick="switchAvTab(1)">â—Ž NFT Solana</button>
+    </div>
+    <!-- Panel galería -->
+    <div class="av-panel active" id="avPanel0">
+      <div class="av-upload-zone" id="avDropZone">
+        <input type="file" accept="image/*" id="avFileInput" onchange="handleAvatarFile(event)"/>
+        <div class="av-upload-icon">🖼</div>
+        <h4>Arrastra tu foto aquí</h4>
+        <p>o haz clic para seleccionar — JPG, PNG, GIF, WEBP · max 5MB</p>
+      </div>
+      <div id="avGalleryPreview" style="display:none;margin-top:14px;display:none;align-items:center;gap:12px">
+        <img id="avGalleryImg" style="width:72px;height:72px;border-radius:12px;object-fit:cover;border:2px solid var(--g)"/>
+        <div>
+          <p id="avGalleryName" style="font-size:13px;color:var(--text);font-weight:600;margin-bottom:3px"></p>
+          <p id="avGallerySize" style="font-size:11px;color:var(--text3)"></p>
+        </div>
+      </div>
+    </div>
+    <!-- Panel NFT -->
+    <div class="av-panel" id="avPanel1">
+      <p style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6">Pega la dirección de <strong>mint</strong> del NFT o la <strong>wallet</strong> que lo contiene. Se buscará la imagen de metadatos en Solana Devnet.</p>
+      <div class="av-nft-row">
+        <div style="flex:1">
+          <input type="text" id="avNftInput" placeholder="Dirección mint NFT (base58, 44 chars)…" oninput="previewNFT(this.value)" style="width:100%"/>
+          <div class="av-nft-info" id="avNftInfo">Introduce la dirección del NFT o de la wallet dueña</div>
+        </div>
+        <div class="av-nft-preview" id="avNftPreview">NFT</div>
+      </div>
+      <div style="background:var(--bg3);border:.5px solid var(--border);border-radius:var(--r);padding:11px 13px;font-size:11px;color:var(--text3);line-height:1.7;margin-bottom:4px">
+        <span style="color:var(--g);font-weight:600">◎ Cómo funciona: </span>La imagen se resuelve vía los metadatos on-chain del NFT (Metaplex standard). Solo NFTs en tu wallet serán aceptados en producción.
+      </div>
+    </div>
+    <div class="av-actions" style="margin-top:16px">
+      <button class="av-cancel" onclick="closeAvModal()">Cancelar</button>
+      <button class="av-save" id="avSaveBtn" onclick="saveAvatar()" disabled style="opacity:.4">Aplicar foto</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PROFILE ═══ -->
+<div id="page-profile" class="page">
+  <div class="con">
+    <div class="ph">
+      <!-- Avatar editable -->
+      <div class="pav-wrap" onclick="openAvModal()">
+        <div class="pav" id="pav">?</div>
+        <button class="pav-edit" tabindex="-1">
+          <span class="pav-edit-icon">✎</span>
+          <span class="pav-edit-lbl">Editar</span>
+        </button>
+      </div>
+      <div class="pi">
+        <h2 id="pnm" data-k="profile.connect"></h2>
+        <p class="pwallet" id="pw">—</p>
+        <p class="pnet" id="pnet" style="display:none">Solana Devnet</p>
+        <div id="pbio-wrap" style="margin-bottom:10px">
+          <textarea class="bio-edit" id="pbio" maxlength="200" placeholder="Escribe una presentación corta…" rows="2" style="display:none"></textarea>
+          <p class="pbio" id="pbio-text" data-k="profile.bio"></p>
+          <button id="pbio-editbtn" style="display:none;background:none;border:.5px solid var(--border2);color:var(--text3);font-family:var(--fb);font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:3px 10px;border-radius:4px;cursor:none;transition:all .15s;margin-top:4px" onclick="toggleBioEdit()">✏ Editar</button>
+        </div>
+        <!-- Stats con data-c para animación por scroll/hover -->
+        <div class="pstats">
+          <div class="pstat-item">
+            <div class="psnum" id="ps" data-pv="0">0</div>
+            <div class="pslbl">Score (u64)</div>
+          </div>
+          <div class="pstat-item">
+            <div class="psnum" id="pn" data-pv="0">0</div>
+            <div class="pslbl" data-k="profile.level"></div>
+          </div>
+          <div class="pstat-item">
+            <div class="psnum" id="pb" data-pv="0">0</div>
+            <div class="pslbl">Badges</div>
+          </div>
+          <div class="pstat-item">
+            <div class="psnum" id="pm2" data-pv="0">0</div>
+            <div class="pslbl" data-k="profile.mentoring"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Level bar -->
+    <div class="lbwrap">
+      <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+        <span style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em" data-k="profile.progress"></span>
+        <span style="font-size:12px;color:var(--g)" id="ll">Nivel 0</span>
+      </div>
+      <div class="lbtrk"><div class="lbfll" id="lb"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3)">
+        <span>0</span><span>10</span><span>50</span><span>100+</span>
+      </div>
+    </div>
+
+    <!-- ACTIVITY GRID — sistema de commits -->
+    <div class="activity-wrap" id="activity-wrap" style="display:none">
+      <div class="activity-header">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <h3 id="activity-title">Actividad on-chain</h3>
+          <div class="streak-badge" id="streak-badge"><span class="streak-fire">🔥</span><span id="streak-txt">0 días</span></div>
+        </div>
+        <div class="activity-legend">
+          <span>Menos</span>
+          <span style="background:var(--bg3);border:.5px solid var(--border)"></span>
+          <span data-v="1" style="background:rgba(255,110,45,0.22);border:.5px solid rgba(255,110,45,0.3)"></span>
+          <span data-v="2" style="background:rgba(255,110,45,0.44);border:.5px solid rgba(255,110,45,0.5)"></span>
+          <span data-v="3" style="background:rgba(255,110,45,0.68);border:.5px solid rgba(255,110,45,0.7)"></span>
+          <span data-v="4" style="background:#ff6e2d;border:.5px solid #ff6e2d"></span>
+          <span>Más</span>
+        </div>
+      </div>
+      <div class="activity-months" id="activity-months"></div>
+      <div class="activity-grid-wrap">
+        <div class="activity-days">
+          <div class="activity-day-lbl"></div>
+          <div class="activity-day-lbl" id="dlbl-mon"></div>
+          <div class="activity-day-lbl"></div>
+          <div class="activity-day-lbl" id="dlbl-wed"></div>
+          <div class="activity-day-lbl"></div>
+          <div class="activity-day-lbl" id="dlbl-fri"></div>
+          <div class="activity-day-lbl"></div>
+        </div>
+        <div class="activity-grid" id="activity-grid"></div>
+      </div>
+      <div style="margin-top:10px;font-size:12px;color:var(--text3)" id="activity-summary"></div>
+    </div>
+
+    <!-- APTITUDES -->
+    <div class="sh" style="padding-top:0"><h2 data-k="profile.skills"></h2><span>BadgeAccount · áreas validadas</span></div>
+    <div class="apt-grid" id="apt-grid"></div>
+    <!-- SKILL BADGES -->
+    <div class="sh" style="padding-top:0"><h2>Skill Badges <span style="font-size:14px;font-weight:400;color:var(--text3)">— Soulbound NFT</span></h2><span>mint_skill_badge()</span></div>
+    <div class="brow" id="blist"></div>
+    <!-- BADGE CASE -->
+    <div class="sh" style="padding-top:0">
+      <h2 data-k="profile.badge_case"></h2>
+      <span data-k="profile.badge_case_hint"></span>
+    </div>
+    <div class="badge-case-grid" id="badge-case-grid"></div>
+    <!-- MIS PROYECTOS con tabs -->
+    <div class="sh"><h2 data-k="profile.myprojects"></h2><span>seeds: [b"project", wallet, nombre]</span></div>
+    <div class="ptabs" id="ptabs"></div>
+    <div class="pgrid" id="mpg"></div>
+    <div style="height:60px"></div>
+  </div>
+</div>
+
+<!-- ═══ SECURITY ═══ -->
+<div id="page-security" class="page">
+  <div class="con">
+    <div class="sh rv0">
+      <div>
+        <h2 data-k="security.title"></h2>
+        <div style="margin-top:6px;display:flex;gap:8px;flex-wrap:wrap">
+          <span class="devnet-chip">Solana Devnet</span>
+          <span class="anchor-tag">declare_id!("TU_PROGRAM_ID")</span>
+        </div>
+      </div>
+      <span>Anchor · Rust</span>
+    </div>
+    <p class="rv0" style="font-size:14px;color:var(--text2);margin-bottom:28px;max-width:680px;line-height:1.75" data-k="security.desc"></p>
+    <div class="secgrid" id="sg"></div>
+    <div class="sh rv0"><h2 data-k="security.levels"></h2><span>UserAccount · score: u64 · nivel: u8</span></div>
+    <table class="ltab rv0">
+      <thead><tr><th data-k="levels.level"></th><th data-k="levels.score"></th><th data-k="levels.perms"></th><th data-k="levels.points"></th></tr></thead>
+      <tbody>
+        <tr><td><span class="lbadge">0</span></td><td>0–9</td><td data-k="levels.l0p"></td><td>—</td></tr>
+        <tr><td><span class="lbadge">1</span></td><td>10–49</td><td data-k="levels.l1p"></td><td>+1 (proyecto aprobado)</td></tr>
+        <tr><td><span class="lbadge">2</span></td><td>50–99</td><td data-k="levels.l2p"></td><td>+2 (validación aprobada)</td></tr>
+        <tr><td><span class="lbadge">3</span></td><td>100+</td><td data-k="levels.l3p"></td><td>+5 (mentoría completada)</td></tr>
+      </tbody>
+    </table>
+    <!-- Errors from contract -->
+    <div class="sh rv0"><h2 data-k="security.errors"></h2><span>SkillProofError enum</span></div>
+    <div id="errorgrid" class="rv0" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px;margin-bottom:48px;"></div>
+    <div style="height:60px"></div>
+  </div>
+</div>
+
+<!-- ═══ NOTIFS ═══ -->
+<div id="page-notifs" class="page">
+  <div class="con">
+    <div class="sh rv0"><h2 data-k="notifs.title"></h2></div>
+    <div id="nl"></div><div style="height:60px"></div>
+  </div>
+</div>
+
+<script>
+/* ════════════════════════════════
+   I18N
+════════════════════════════════ */
+const I18N={
+es:{
+'nav.home':'Inicio','nav.projects':'Proyectos','nav.validate':'Validar','nav.mentors':'Mentores','nav.profile':'Mi Perfil','nav.contracts':'Contratos','nav.connect':'Conectar Wallet',
+'hero.label':'01 — Red de reputación on-chain en Solana',
+'hero.h1':'Tu reputación<br>son tus<br><span class="acc">acciones</span>',
+'hero.desc':'Una capa de reputación verificada on-chain donde cada contribución real genera credenciales infalsificables en Solana Devnet.',
+'hero.cta1':'Subir Proyecto','hero.cta2':'Explorar Proyectos',
+'stats.projects':'Proyectos activos','stats.validations':'Validaciones emitidas','stats.badges':'Skill Badges NFT','stats.mentors':'Mentores nivel 3',
+'home.feed':'Feed público','home.recent':'Proyectos recientes','filter.area':'Área',
+'projects.title':'Explorador de proyectos',
+'upload.title':'Subir proyecto',
+'upload.hint':'Proyecto enviado a Solana Devnet vía submit_project(). Entra en estado pendiente (estado: 0) hasta ser aprobado.',
+'upload.approval_rule':'Regla de aprobación — check_project_approval()',
+'upload.approval_detail':'≥ 3 validaciones positivas, o ≥ 2 validaciones + 48 horas desde el timestamp on-chain.',
+'upload.name':'Nombre','upload.name_ph':'ej. SkillProof DAO',
+'upload.area':'Área (max 50 chars)','upload.desc':'Descripción','upload.desc_ph':'Describe qué construiste y el problema que resuelve…',
+'upload.evidence':'Evidencia — link, repositorio o video','upload.evidence_ph':'https://github.com/…',
+'upload.submit':'Enviar vía submit_project()',
+'validate.title':'Validar proyectos',
+'validate.hint':'validate_project(aprobado: bool, categoria_rechazo: u8, comentario: String). +2 score al validador si aprueba (saturating_add).',
+'mentors.title':'Buscar mentor',
+'mentors.hint':'Solo puedes solicitar mentoría para proyectos con estado == 2 (rechazados). El mentor recibe +5 score y un MentoringBadge al completar.',
+'mentors.restriction':'⚠ require!(project.estado == 2) — Solo proyectos rechazados pueden solicitar mentoría',
+'profile.connect':'Conecta tu wallet Solana',
+'profile.bio':'Builder en Solana. Construyendo reputación on-chain a través de contribuciones verificadas por la comunidad DAO.',
+'profile.level':'Nivel (u8)','profile.mentoring':'Mentorías (u32)','profile.progress':'Progreso de nivel','profile.myprojects':'Mis proyectos',
+'security.title':'Contratos & seguridad','security.desc':'SkillProof DAO implementa las mejores prácticas de Anchor. Cada instrucción pasa múltiples capas de validación antes de mutar estado on-chain en Solana Devnet.','security.levels':'Sistema de niveles','security.errors':'Errores del contrato',
+'levels.level':'Nivel','levels.score':'Score requerido','levels.perms':'Permisos','levels.points':'Puntos por acción',
+'levels.l0p':'Solo ver','levels.l1p':'Puede votar propuestas (score ≥ 10)','levels.l2p':'Validar + votar + crear propuestas','levels.l3p':'Puede ser mentor',
+'notifs.title':'Notificaciones',
+'toast.upload':'Conecta tu wallet Solana para subir',
+'toast.wallet_on':'â—Ž Wallet Solana conectada','toast.wallet_off':'Wallet desconectada',
+'toast.val':'✓ Validación registrada on-chain. +2 score','toast.rej':'✕ Rechazo enviado on-chain','toast.sub':'✓ Proyecto enviado a Solana Devnet','toast.ment':'Solicitud de mentoría enviada',
+'filter.status':'Estado','filter.pending':'Pendiente','filter.approved':'Aprobado','filter.rejected':'Rechazado',
+'profile.skills':'Aptitudes',
+'profile.badge_case':'Badge Case',
+'profile.badge_case_hint':'Inventario de badges conseguidas',
+'wp.title.conn':'Conectar Wallet','wp.title.profile':'Mi Wallet','wp.phantom':'Phantom','wp.backpack':'Backpack','wp.solflare':'Solflare','wp.desc':'Conecta tu wallet de Solana para interactuar con SkillProof DAO en Devnet.',
+'wp.copy':'Copiar','wp.copied':'¡Copiado!','wp.goto':'Ver perfil completo','wp.upload':'Subir proyecto','wp.validate':'Validar proyectos','wp.disconnect':'Desconectar wallet',
+'wp.notconn':'Sin conectar','wp.registered':'register_user() ✓',
+'tab.approved':'Aprobados','tab.pending':'Pendientes','tab.rejected':'Rechazados',
+'val.approve':'Aprobar','val.reject':'Rechazar','val.detail':'Ver detalle',
+'val.cat_label':'Categoría de rechazo (u8: 1–3)',
+'val.comment':'Comentario (opcional)',
+},
+en:{
+'nav.home':'Home','nav.projects':'Projects','nav.validate':'Validate','nav.mentors':'Mentors','nav.profile':'My Profile','nav.contracts':'Contracts','nav.connect':'Connect Wallet',
+'hero.label':'01 — On-chain reputation network on Solana',
+'hero.h1':'Your reputation<br>is your<br><span class="acc">actions</span>',
+'hero.desc':'A verified on-chain reputation layer where every real contribution generates unforgeable credentials on Solana Devnet.',
+'hero.cta1':'Submit Project','hero.cta2':'Explore Projects',
+'stats.projects':'Active projects','stats.validations':'Validations issued','stats.badges':'Skill Badge NFTs','stats.mentors':'Level 3 mentors',
+'home.feed':'Public feed','home.recent':'Recent projects','filter.area':'Area',
+'projects.title':'Project explorer',
+'upload.title':'Submit project',
+'upload.hint':'Project submitted to Solana Devnet via submit_project(). Enters pending state (estado: 0) until approved.',
+'upload.approval_rule':'Approval rule — check_project_approval()',
+'upload.approval_detail':'≥ 3 positive validations, or ≥ 2 validations + 48 hours from the on-chain timestamp.',
+'upload.name':'Name','upload.name_ph':'e.g. SkillProof DAO',
+'upload.area':'Area (max 50 chars)','upload.desc':'Description','upload.desc_ph':'Describe what you built and the problem it solves…',
+'upload.evidence':'Evidence — link, repo or video','upload.evidence_ph':'https://github.com/…',
+'upload.submit':'Submit via submit_project()',
+'validate.title':'Validate projects',
+'validate.hint':'validate_project(aprobado: bool, categoria_rechazo: u8, comentario: String). Validator earns +2 score if approved (saturating_add).',
+'mentors.title':'Find a mentor',
+'mentors.hint':'You can only request mentoring for projects with estado == 2 (rejected). Mentor earns +5 score and a MentoringBadge upon completion.',
+'mentors.restriction':'⚠ require!(project.estado == 2) — Only rejected projects can request mentoring',
+'profile.connect':'Connect your Solana wallet',
+'profile.bio':'Solana builder. Growing on-chain reputation through verified DAO community contributions.',
+'profile.level':'Level (u8)','profile.mentoring':'Mentorships (u32)','profile.progress':'Level progress','profile.myprojects':'My projects',
+'security.title':'Contracts & security','security.desc':'SkillProof DAO implements Anchor best practices. Every instruction passes multiple validation layers before mutating on-chain state on Solana Devnet.','security.levels':'Level system','security.errors':'Contract errors',
+'levels.level':'Level','levels.score':'Required score','levels.perms':'Permissions','levels.points':'Points per action',
+'levels.l0p':'View only','levels.l1p':'Can vote proposals (score ≥ 10)','levels.l2p':'Validate + vote + create proposals','levels.l3p':'Can be a mentor',
+'notifs.title':'Notifications',
+'toast.upload':'Connect your Solana wallet first',
+'toast.wallet_on':'â—Ž Solana wallet connected','toast.wallet_off':'Wallet disconnected',
+'toast.val':'✓ Validation recorded on-chain. +2 score','toast.rej':'✕ Rejection submitted on-chain','toast.sub':'✓ Project submitted to Solana Devnet','toast.ment':'Mentoring request sent',
+'cat.1':'Insufficient evidence','cat.2':'Incomplete project','cat.3':'Out of scope',
+'filter.status':'Status','filter.pending':'Pending','filter.approved':'Approved','filter.rejected':'Rejected',
+'profile.skills':'Skills',
+'profile.badge_case':'Badge Case',
+'profile.badge_case_hint':'All badges you have earned',
+'wp.title.conn':'Connect Wallet','wp.title.profile':'My Wallet','wp.desc':'Connect your Solana wallet to interact with SkillProof DAO on Devnet.',
+'wp.copy':'Copy','wp.copied':'Copied!','wp.goto':'View full profile','wp.upload':'Submit project','wp.validate':'Validate projects','wp.disconnect':'Disconnect wallet',
+'wp.notconn':'Not connected','wp.registered':'register_user() ✓',
+'tab.approved':'Approved','tab.pending':'Pending','tab.rejected':'Rejected',
+'val.approve':'Approve','val.reject':'Reject','val.detail':'View detail',
+'val.cat_label':'Rejection category (u8: 1–3)',
+'val.comment':'Comment (optional)',
+},
+pt:{
+'nav.home':'Início','nav.projects':'Projetos','nav.validate':'Validar','nav.mentors':'Mentores','nav.profile':'Meu Perfil','nav.contracts':'Contratos','nav.connect':'Conectar Carteira',
+'hero.label':'01 — Rede de reputação on-chain na Solana',
+'hero.h1':'Sua reputação<br>são suas<br><span class="acc">ações</span>',
+'hero.desc':'Uma camada de reputação verificada on-chain onde cada contribuição real gera credenciais infalsificáveis na Solana Devnet.',
+'hero.cta1':'Enviar Projeto','hero.cta2':'Explorar Projetos',
+'stats.projects':'Projetos ativos','stats.validations':'Validações emitidas','stats.badges':'Skill Badges NFT','stats.mentors':'Mentores nível 3',
+'home.feed':'Feed público','home.recent':'Projetos recentes','filter.area':'Área',
+'projects.title':'Explorador de projetos',
+'upload.title':'Enviar projeto',
+'upload.hint':'Projeto enviado à Solana Devnet via submit_project(). Entra em estado pendente (estado: 0) até ser aprovado.',
+'upload.approval_rule':'Regra de aprovação — check_project_approval()',
+'upload.approval_detail':'≥ 3 validações positivas, ou ≥ 2 validações + 48 horas desde o timestamp on-chain.',
+'upload.name':'Nome','upload.name_ph':'ex. SkillProof DAO',
+'upload.area':'Área (máx 50 chars)','upload.desc':'Descrição','upload.desc_ph':'Descreva o que você construiu e o problema que resolve…',
+'upload.evidence':'Evidência — link, repositório ou vídeo','upload.evidence_ph':'https://github.com/…',
+'upload.submit':'Enviar via submit_project()',
+'validate.title':'Validar projetos',
+'validate.hint':'validate_project(aprobado: bool, categoria_rechazo: u8, comentario: String). Validador ganha +2 score se aprovar (saturating_add).',
+'mentors.title':'Encontrar mentor',
+'mentors.hint':'Você só pode solicitar mentoria para projetos com estado == 2 (rejeitados). O mentor recebe +5 score e um MentoringBadge ao concluir.',
+'mentors.restriction':'⚠ require!(project.estado == 2) — Apenas projetos rejeitados podem solicitar mentoria',
+'profile.connect':'Conecte sua carteira Solana',
+'profile.bio':'Builder na Solana. Construindo reputação on-chain através de contribuições verificadas.',
+'profile.level':'Nível (u8)','profile.mentoring':'Mentorias (u32)','profile.progress':'Progresso de nível','profile.myprojects':'Meus projetos',
+'security.title':'Contratos & segurança','security.desc':'SkillProof DAO implementa as melhores práticas em Anchor. Cada instrução passa por múltiplas camadas de validação antes de mutar estado on-chain.','security.levels':'Sistema de níveis','security.errors':'Erros do contrato',
+'levels.level':'Nível','levels.score':'Score necessário','levels.perms':'Permissões','levels.points':'Pontos por ação',
+'levels.l0p':'Apenas visualizar','levels.l1p':'Pode votar propostas (score ≥ 10)','levels.l2p':'Validar + votar + criar propostas','levels.l3p':'Pode ser mentor',
+'notifs.title':'Notificações',
+'toast.upload':'Conecte sua carteira Solana primeiro',
+'toast.wallet_on':'â—Ž Carteira Solana conectada','toast.wallet_off':'Carteira desconectada',
+'toast.val':'✓ Validação registrada on-chain. +2 score','toast.rej':'✕ Rejeição enviada on-chain','toast.sub':'✓ Projeto enviado à Solana Devnet','toast.ment':'Solicitação de mentoria enviada',
+'cat.1':'Evidência insuficiente','cat.2':'Projeto incompleto','cat.3':'Fora da área',
+'filter.status':'Estado','filter.pending':'Pendente','filter.approved':'Aprovado','filter.rejected':'Rejeitado',
+'profile.skills':'Aptidões',
+'profile.badge_case':'Badge Case',
+'profile.badge_case_hint':'Inventário de badges conquistadas',
+'wp.title.conn':'Conectar Carteira','wp.title.profile':'Minha Carteira','wp.desc':'Conecte sua carteira Solana para interagir com SkillProof DAO no Devnet.',
+'wp.copy':'Copiar','wp.copied':'Copiado!','wp.goto':'Ver perfil completo','wp.upload':'Enviar projeto','wp.validate':'Validar projetos','wp.disconnect':'Desconectar carteira',
+'wp.notconn':'Não conectado','wp.registered':'register_user() ✓',
+'tab.approved':'Aprovados','tab.pending':'Pendentes','tab.rejected':'Rejeitados',
+'val.approve':'Aprovar','val.reject':'Rejeitar','val.detail':'Ver detalhe',
+'val.cat_label':'Categoria de rejeição (u8: 1–3)',
+'val.comment':'Comentário (opcional)',
+},
+zh:{
+'nav.home':'首页','nav.projects':'项目','nav.validate':'验证','nav.mentors':'导师','nav.profile':'我的主页','nav.contracts':'合约','nav.connect':'连接钱包',
+'hero.label':'01 — Solana 链上信誉网络',
+'hero.h1':'你的信誉<br>就是你的<br><span class="acc">行动</span>',
+'hero.desc':'一个经链上验证的信誉层,每一次真实贡献都会在 Solana Devnet 上生成不可伪造的凭证。',
+'hero.cta1':'提交项目','hero.cta2':'探索项目',
+'stats.projects':'活跃项目','stats.validations':'已发出验证','stats.badges':'技能徽章 NFT','stats.mentors':'3级导师',
+'home.feed':'公开动态','home.recent':'最新项目','filter.area':'领域',
+'projects.title':'项目探索',
+'upload.title':'提交项目',
+'upload.hint':'项目通过 submit_project() 提交到 Solana Devnet,进入待审状态 (estado: 0) 直到被批准。',
+'upload.approval_rule':'批准规则 — check_project_approval()',
+'upload.approval_detail':'≥ 3 次正面验证,或 ≥ 2 次验证 + 距链上时间戳已过 48 小时。',
+'upload.name':'名称','upload.name_ph':'例如 SkillProof DAO',
+'upload.area':'领域 (最多50字符)','upload.desc':'描述','upload.desc_ph':'描述您构建的内容及其解决的问题…',
+'upload.evidence':'证明 — 链接、代码库或视频','upload.evidence_ph':'https://github.com/…',
+'upload.submit':'通过 submit_project() 提交',
+'validate.title':'验证项目',
+'validate.hint':'validate_project(aprobado: bool, categoria_rechazo: u8, comentario: String)。批准后验证者获得 +2 积分 (saturating_add)。',
+'mentors.title':'寻找导师',
+'mentors.hint':'只能为 estado == 2(已拒绝)的项目申请辅导。导师完成后获得 +5 积分和 MentoringBadge。',
+'mentors.restriction':'⚠ require!(project.estado == 2) — 只有被拒绝的项目才能申请辅导',
+'profile.connect':'连接您的 Solana 钱包',
+'profile.bio':'Solana 构建者。通过经过 DAO 社区验证的贡献建立链上信誉。',
+'profile.level':'等级 (u8)','profile.mentoring':'导师辅导 (u32)','profile.progress':'等级进度','profile.myprojects':'我的项目',
+'security.title':'合约与安全','security.desc':'SkillProof DAO 在 Anchor 中实现了最佳安全实践。每条指令在改变 Solana Devnet 上的链上状态之前都要经过多层验证。','security.levels':'等级系统','security.errors':'合约错误',
+'levels.level':'等级','levels.score':'所需积分','levels.perms':'权限','levels.points':'每次操作积分',
+'levels.l0p':'仅查看','levels.l1p':'可投票提案 (score ≥ 10)','levels.l2p':'验证+投票+创建提案','levels.l3p':'可成为导师',
+'notifs.title':'通知',
+'toast.upload':'请先连接您的 Solana 钱包',
+'toast.wallet_on':'◎ Solana 钱包已连接','toast.wallet_off':'钱包已断开',
+'toast.val':'✓ 验证已上链记录。+2 积分','toast.rej':'✕ 拒绝已上链提交','toast.sub':'✓ 项目已提交至 Solana Devnet','toast.ment':'辅导申请已发送',
+'cat.1':'证明不足','cat.2':'项目不完整','cat.3':'超出领域范围',
+'filter.status':'状态','filter.pending':'待审','filter.approved':'已通过','filter.rejected':'已拒绝',
+'profile.skills':'技能领域',
+'profile.badge_case':'Badge Case',
+'profile.badge_case_hint':'你已获得的所有徽章',
+'wp.title.conn':'连接钱包','wp.title.profile':'我的钱包','wp.desc':'连接您的 Solana 钱包以在 Devnet 上与 SkillProof DAO 交互。',
+'wp.copy':'复制','wp.copied':'已复制!','wp.goto':'查看完整主页','wp.upload':'提交项目','wp.validate':'验证项目','wp.disconnect':'断开钱包',
+'wp.notconn':'未连接','wp.registered':'register_user() ✓',
+'tab.approved':'已通过','tab.pending':'待审','tab.rejected':'已拒绝',
+'val.approve':'通过','val.reject':'拒绝','val.detail':'查看详情',
+'val.cat_label':'拒绝类别 (u8: 1–3)',
+'val.comment':'评论(可选)',
+}};
+const LMETA={
+  es:{flag:'🇪🇸',code:'ES',name:'Español'},
+  en:{flag:'🇺🇸',code:'EN',name:'English'},
+  pt:{flag:'🇧🇷',code:'PT',name:'Português'},
+  zh:{flag:'🇨🇳',code:'中',name:'中文'},
+};
+let lang='es';
+function syncLangUI(){
+  const meta=LMETA[lang]||LMETA.es;
+  const flag=document.getElementById('lflag');
+  const code=document.getElementById('lcode');
+  if(flag) flag.textContent=meta.flag;
+  if(code) code.textContent=meta.code;
+  document.querySelectorAll('.lopt').forEach(o=>{
+    const l=o.dataset.l;
+    const m=LMETA[l];
+    if(m) o.textContent=`${m.flag} ${m.name}`;
+    o.classList.toggle('active',l===lang);
+  });
+}
+function T(k){return(I18N[lang]||I18N.es)[k]||(I18N.es[k])||k;}
+function applyI18n(){
+  document.querySelectorAll('[data-k]').forEach(e=>{const v=T(e.getAttribute('data-k'));if(v)e.textContent=v;});
+  document.querySelectorAll('[data-kh]').forEach(e=>{const v=T(e.getAttribute('data-kh'));if(v)e.innerHTML=v;});
+  document.querySelectorAll('[data-kp]').forEach(e=>{const v=T(e.getAttribute('data-kp'));if(v)e.placeholder=v;});
+  document.documentElement.lang=lang;
+  syncLangUI();
+  rHome();rNotifs();
+  if(CP==='validate')rValidate();
+  if(CP==='mentors')rMentors();
+  if(CP==='profile')rProfile();
+  if(CP==='security')rSecurity();
+}
+function setL(l){
+  if(!LMETA[l]) return;
+  lang=l;
+  try{localStorage.setItem('sp_lang',l);}catch(_){}
+  document.getElementById('lw').classList.remove('open');
+  applyI18n();
+  t(`${LMETA[l].flag} ${l.toUpperCase()}`);
+}
+function toggleL(){document.getElementById('lw').classList.toggle('open');}
+document.addEventListener('click',e=>{if(!e.target.closest('#lw'))document.getElementById('lw').classList.remove('open');});
+
+/* ════ THEME ════ */
+let dark=document.documentElement.getAttribute('data-theme')==='dark';
+function applyTheme(){
+  document.documentElement.setAttribute('data-theme',dark?'dark':'light');
+  document.getElementById('tk').textContent=dark?'🌙':'☀️';
+}
+function toggleT(){
+  dark=!dark;
+  try{localStorage.setItem('sp_theme',dark?'dark':'light');}catch(_){}
+  applyTheme();
+  t(dark?'🌙 Modo oscuro':'☀️ Modo claro');
+}
+
+/* ════ CURSOR ════ */
+const cdot=document.getElementById('cd'),cglow=document.getElementById('cg');
+let mx=0,my=0,gx=0,gy=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cdot.style.left=mx+'px';cdot.style.top=my+'px';});
+(function animC(){gx+=(mx-gx)*.07;gy+=(my-gy)*.07;cglow.style.left=gx+'px';cglow.style.top=gy+'px';requestAnimationFrame(animC);})();
+function bindC(){document.querySelectorAll('button,a,[onclick],.pcard,.mcrd,.secc,.sitem,.fb,.lopt,.vcrd,.ni').forEach(el=>{if(!el._cb){el.addEventListener('mouseenter',()=>document.body.classList.add('ch'));el.addEventListener('mouseleave',()=>document.body.classList.remove('ch'));el._cb=1;}});}
+document.addEventListener('mousedown',()=>document.body.classList.add('cc'));
+document.addEventListener('mouseup',()=>document.body.classList.remove('cc'));
+
+/* ════ SCROLL ════ */
+window.addEventListener('scroll',()=>{
+  const tot=document.body.scrollHeight-window.innerHeight;
+  document.getElementById('spb').style.width=(tot>0?(window.scrollY/tot*100):0)+'%';
+  reveal();
+},{passive:true});
+function reveal(){
+  document.querySelectorAll('.rv0').forEach(el=>{if(el.getBoundingClientRect().top<window.innerHeight*.9)el.classList.add('vis');});
+  document.querySelectorAll('.pcard').forEach((el,i)=>{if(el.getBoundingClientRect().top<window.innerHeight*.93)setTimeout(()=>el.classList.add('rv'),i*55);});
+}
+
+/* ════ COUNTER — anima SIEMPRE (no solo una vez) ════ */
+function animC2(el, target, dur){
+  let cur = parseFloat(el.textContent.replace(/,/g,'').replace(/[^\d.]/g,'')) || 0;
+  const dist = target - cur;
+  if(Math.abs(dist) < 0.5){ el.textContent = target.toLocaleString(); return; }
+  const steps = Math.max(dur / 14, 1);
+  const inc = dist / steps;
+  clearInterval(el._t);
+  el._t = setInterval(()=>{
+    cur += inc;
+    const done = inc > 0 ? cur >= target : cur <= target;
+    if(done){ el.textContent = target.toLocaleString(); clearInterval(el._t); return; }
+    el.textContent = Math.round(cur).toLocaleString();
+  }, 14);
+}
+
+/* Stats hero — IntersectionObserver, se dispara SIEMPRE que entra en viewport */
+const statsObs = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      document.querySelectorAll('.snum[data-c]').forEach(el=>{
+        el.textContent = '0';
+        animC2(el, parseInt(el.dataset.c), 1400);
+      });
+    }
+  });
+},{threshold:0.3});
+const sbarEl = document.querySelector('.sbar');
+if(sbarEl) statsObs.observe(sbarEl);
+
+/* Hover hero stats — re-anima desde 0 cada vez */
+document.querySelectorAll('.sitem').forEach(item=>{
+  item.addEventListener('mouseenter',()=>{
+    const el = item.querySelector('.snum[data-c]');
+    if(!el) return;
+    el.textContent = '0';
+    animC2(el, parseInt(el.dataset.c), 900);
+  });
+});
+
+/* Stats perfil — IntersectionObserver + hover, SIEMPRE */
+function setupProfileStats(){
+  const wrap = document.querySelector('.pstats');
+  if(!wrap) return;
+  const profObs = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        document.querySelectorAll('.psnum[data-pv]').forEach(el=>{
+          const target = parseInt(el.dataset.pv) || 0;
+          if(target === 0) return;
+          el.textContent = '0';
+          animC2(el, target, 1200);
+        });
+      }
+    });
+  },{threshold:0.4});
+  profObs.observe(wrap);
+  // Hover en cada stat del perfil
+  document.querySelectorAll('.pstat-item').forEach(item=>{
+    item.addEventListener('mouseenter',()=>{
+      const el = item.querySelector('.psnum[data-pv]');
+      if(!el) return;
+      const target = parseInt(el.dataset.pv) || 0;
+      if(target === 0) return;
+      el.textContent = '0';
+      animC2(el, target, 800);
+    });
+  });
+}
+setupProfileStats();
+
+/* ════════════════════════════════
+   DATA — Solana base58 addresses
+════════════════════════════════ */
+// All pubkeys are valid Solana base58 format (32 bytes, 44 chars)
+const WALLETS = {
+  me:      'AiZBbxXqKhT9gWvPmLFzDjE3nYsRtQuV7kNcM5oHwJp2',
+  alice:   'BjKcN7dWpLtE4rXaYmQvPnHsSuFzM8oAiR2wVq3kGxT9',
+  bob:     'CkLdO8eXqMuF5sYbZnRwQoItTvGaN9pBjS3xWr4lHyU0',
+  carol:   'DlMeP9fYrNvG6tZcAoSxRpJuUwHbO0qCkT4yXs5mIzV1',
+  david:   'EmNfQ0gZsOwH7uAdBpTySpKvVxIcP1rDlU5zYt6nJaW2',
+  elena:   'FnOgR1hAtPxI8vBeCqUzTqLwWyJdQ2sEmV6AZu7oKbX3',
+  marco:   'GoPhS2iBuQyJ9wCfDrVAUrMxXzKe R3tFnW7BAv8pLcY4',
+  sara:    'HpQiT3jCvRzK0xDgEsWBVsNyYALf S4uGoX8CBw9qMdZ5',
+  andres:  'IqRjU4kDwSAL1yEhFtXCWtOzZBMgT5vHpY9DCx0rNeA6',
+};
+// Fix spaces in test data
+Object.keys(WALLETS).forEach(k=>WALLETS[k]=WALLETS[k].replace(/\s/g,''));
+
+function shortAddr(addr){return addr.slice(0,4)+'…'+addr.slice(-4);}
+function initials(addr){return addr.slice(0,2);}
+
+const PROJECTS=[
+  {id:1,n:'SkillProof DAO',a:'Blockchain',d:'Sistema de reputación on-chain en Solana. Credenciales NFT infalsificables ligadas a contribuciones reales verificadas por la comunidad DAO.',ev:'https://github.com/skillproof/dao',aut:WALLETS.me,sc:127,st:1,val:4,ts:Date.now()-604800000,
+   comments:[
+     {v:WALLETS.alice,ok:true,cat:0,txt:'Código limpio, arquitectura sólida. PDAs bien definidas.',sc:82},
+     {v:WALLETS.bob,ok:true,cat:0,txt:'Excelente uso de saturating_add en todos los incrementos.',sc:61},
+     {v:WALLETS.carol,ok:true,cat:0,txt:'Seeds canónicas correctas. Bump guardado y reutilizado.',sc:95},
+     {v:WALLETS.david,ok:true,cat:0,txt:'Tests de integración completos.',sc:78},
+   ]},
+  {id:2,n:'SolanaSwap UI',a:'Frontend',d:'Interfaz DEX construida con React y @solana/web3.js. Soporte Phantom y Backpack wallets con deep link móvil.',ev:'https://github.com/solanaswap',aut:WALLETS.alice,sc:58,st:0,val:2,ts:Date.now()-172800000,
+   comments:[
+     {v:WALLETS.me,ok:true,cat:0,txt:'Integración con Phantom correcta. UI clara.',sc:127},
+     {v:WALLETS.carol,ok:false,cat:2,txt:'Faltan tests de integración y manejo de errores de red.',sc:95},
+   ]},
+  {id:3,n:'RustML Pipeline',a:'IA',d:'Pipeline de inferencia en Rust con ONNX runtime. Reduce latencia de modelos de clasificación en 40% vs Python.',ev:'https://github.com/rustml',aut:WALLETS.bob,sc:45,st:0,val:1,ts:Date.now()-86400000,
+   comments:[
+     {v:WALLETS.alice,ok:false,cat:1,txt:'Falta benchmark reproducible y dataset de prueba verificable.',sc:58},
+   ]},
+  {id:4,n:'ChainAuth SDK',a:'Backend',d:'SDK TypeScript para autenticación sin contraseña usando firmas Solana. Compatible con NextAuth.js y Express middleware.',ev:'https://github.com/chainauth',aut:WALLETS.carol,sc:95,st:1,val:3,ts:Date.now()-1296000000,
+   comments:[
+     {v:WALLETS.me,ok:true,cat:0,txt:'Implementación de firma correcta. Compatible con Ledger.',sc:127},
+     {v:WALLETS.alice,ok:true,cat:0,txt:'Bien documentado.',sc:58},
+     {v:WALLETS.david,ok:true,cat:0,txt:'Maneja edge cases de expiración de sesión.',sc:78},
+   ]},
+  {id:5,n:'NFT Metadata Indexer',a:'Blockchain',d:'Indexador on-chain de metadatos NFT en Solana. 10k tx/segundo con arquitectura event-driven y WebSocket feed.',ev:'https://nft-indexer.dev',aut:WALLETS.david,sc:78,st:2,val:0,ts:Date.now()-2592000000,
+   comments:[
+     {v:WALLETS.bob,ok:false,cat:2,txt:'No maneja re-orgs correctamente. Falta gestión de errores RPC.',sc:45},
+     {v:WALLETS.carol,ok:false,cat:2,txt:'Estado inconsistente durante outages del nodo.',sc:95},
+   ]},
+  {id:6,n:'ZK Voting Module',a:'Blockchain',d:'Módulo de votación con zero-knowledge proofs. Voto on-chain preservando anonimato usando Groth16. Ponderado por score (u64).',ev:'https://github.com/zkvote',aut:WALLETS.elena,sc:112,st:1,val:5,ts:Date.now()-5184000000,
+   comments:[
+     {v:WALLETS.me,ok:true,cat:0,txt:'Implementación ZK sólida. Groth16 bien integrado.',sc:127},
+     {v:WALLETS.alice,ok:true,cat:0,txt:'Voto ponderado por score implementado correctamente.',sc:58},
+   ]},
+];
+
+const MENTORS=[
+  {n:'Elena Vásquez',wallet:WALLETS.elena,i:'EV',sc:142,nivel:3,a:['Blockchain','Smart Contracts'],cnt:7},
+  {n:'Marco Ricci',wallet:WALLETS.marco,i:'MR',sc:118,nivel:3,a:['Backend','IA'],cnt:4},
+  {n:'Sara Okonkwo',wallet:WALLETS.sara,i:'SO',sc:135,nivel:3,a:['Frontend','Mobile'],cnt:9},
+  {n:'Andrés Lima',wallet:WALLETS.andres,i:'AL',sc:108,nivel:3,a:['Blockchain','DevOps'],cnt:3},
+];
+
+// Errors from SkillProofError enum in lib.rs
+const CONTRACT_ERRORS=[
+  {code:'ScoreInsuficiente',msg:'Score insuficiente para realizar esta accion',ctx:'validate_project — score < 50'},
+  {code:'ScoreInsuficienteParaVotar',msg:'Necesitas al menos 10 puntos para votar',ctx:'cast_vote — score < 10'},
+  {code:'NoPuedesValidarTuPropio',msg:'No puedes validar tu propio proyecto',ctx:'validate_project — validator == author'},
+  {code:'ProyectoNoEstaPendiente',msg:'El proyecto no esta en estado pendiente',ctx:'validate_project — estado != 0'},
+  {code:'ProyectoNoAprobado',msg:'El proyecto no esta aprobado',ctx:'mint_skill_badge, complete_mentoring'},
+  {code:'ProyectoNoRechazado',msg:'El proyecto no esta rechazado',ctx:'request_mentoring — estado != 2'},
+  {code:'CategoriaRequerida',msg:'Debes elegir una categoria de rechazo',ctx:'validate_project — !aprobado && cat < 1 o > 3'},
+  {code:'PropuestaInactiva',msg:'La propuesta no esta activa',ctx:'cast_vote — activa == false'},
+  {code:'NoEresElAutor',msg:'No eres el autor de este proyecto o propuesta',ctx:'close_proposal, mint_skill_badge'},
+  {code:'MentorSinNivel',msg:'El mentor necesita nivel 3',ctx:'request_mentoring — mentor.nivel < 3'},
+  {code:'NivelInsuficiente',msg:'Nivel insuficiente para crear propuestas',ctx:'create_proposal — nivel < 2'},
+  {code:'NombreDemasiadoLargo',msg:'Nombre maximo 100 caracteres',ctx:'submit_project'},
+  {code:'AreaDemasiadoLarga',msg:'Area maximo 50 caracteres',ctx:'submit_project'},
+  {code:'DescripcionDemasiadoLarga',msg:'Descripcion maximo 500 caracteres',ctx:'submit_project'},
+  {code:'EvidenciaDemasiadoLarga',msg:'Evidencia maximo 200 caracteres',ctx:'submit_project'},
+];
+
+const SECCARDS=[
+  {ic:'shield',title:'Signer Check',desc:{es:'Solo el firmante legítimo puede mutar su cuenta. Signer<\'info> forzado por Anchor en todos los contextos con autoridad.',en:'Only the legitimate signer can mutate their account. Anchor enforces Signer<\'info> in all authority contexts.',pt:'Somente o signatário legítimo pode mutar sua conta.',zh:'只有合法签名者才能修改账户。Anchor 强制执行 Signer。'},
+   rust:`<span class="at">#[account(mut)]</span>\n<span class="kw">pub</span> signer: <span class="at">Signer</span>&lt;<span class="kw">'info</span>&gt;,`,tag:'Contratos 1–6'},
+  {ic:'info',title:'Ownership Check — PDAs',desc:{es:'Account<\'info, T> verifica automáticamente owner == program_id. Imposible pasar cuentas de otro programa.',en:'Account<\'info, T> automatically verifies owner == program_id. Cannot pass accounts from another program.',pt:'Account<\'info, T> verifica automaticamente owner == program_id.',zh:'Account<\'info, T> 自动验证 owner == program_id。'},
+   rust:`<span class="at">Account</span>&lt;<span class="kw">'info</span>, <span class="at">UserAccount</span>&gt;\n<span class="cm">// Anchor verifica: owner == program_id</span>`,tag:'PDAs'},
+  {ic:'check',title:'Account Data Matching',desc:{es:'validator.wallet ≠ project.author forzado. Nadie puede validar su propio proyecto.',en:'validator.wallet ≠ project.author enforced. Nobody can validate their own project.',pt:'validator.wallet ≠ project.author garantido.',zh:'强制 validator.wallet ≠ project.author,不能验证自己的项目。'},
+   rust:`<span class="at">require!</span>(validator_account.wallet\n  != project.author,\n  <span class="st">NoPuedesValidarTuPropio</span>);`,tag:'Contrato 3'},
+  {ic:'dollar',title:'Aritmética segura — u64',desc:{es:'score es u64. Todos los incrementos usan saturating_add. Overflow imposible aunque el score sea u64::MAX.',en:'score is u64. All increments use saturating_add. Overflow impossible even at u64::MAX.',pt:'score é u64. Todos os incrementos usam saturating_add.',zh:'score 是 u64,所有增量使用 saturating_add,u64::MAX 时也不会溢出。'},
+   rust:`user.score = user.score\n  .<span class="at">saturating_add</span>(2);\n<span class="cm">// u64 — nunca overflow</span>`,tag:'Contratos 2–3–6'},
+  {ic:'db',title:'Seeds canónicas — bump guardado',desc:{es:'Cada PDA guarda su bump en la cuenta. Se reutiliza con bump = account.bump para evitar bump grinding.',en:'Each PDA stores its bump. Reused with bump = account.bump to prevent bump grinding.',pt:'Cada PDA armazena seu bump para evitar bump grinding.',zh:'每个 PDA 存储 bump,通过 bump = account.bump 重用,防止 bump grinding。'},
+   rust:`seeds = [<span class="st">b"user"</span>,\n  signer.key().as_ref()],\nbump = user_account.bump\n<span class="cm">// bump guardado en cuenta</span>`,tag:'Todos los contratos'},
+  {ic:'lock',title:'#[instruction] — Seeds dinámicas',desc:{es:'Seeds del ProjectAccount incluyen el nombre del proyecto (String). Derivado con #[instruction(nombre)] para uso seguro.',en:'ProjectAccount seeds include the project name (String). Derived with #[instruction(nombre)] for safe use.',pt:'Seeds do ProjectAccount incluem o nome do projeto.',zh:'ProjectAccount 的 seeds 包含项目名称,通过 #[instruction(nombre)] 安全派生。'},
+   rust:`<span class="at">#[instruction(nombre: String)]</span>\nseeds = [<span class="st">b"project"</span>,\n  signer.key().as_ref(),\n  nombre.as_bytes()], bump`,tag:'Contrato 2'},
+  {ic:'wave',title:'Límites de longitud — require!',desc:{es:'nombre ≤ 100, area ≤ 50, descripcion ≤ 500, evidencia ≤ 200. Verificados al inicio de submit_project().',en:'nombre ≤ 100, area ≤ 50, descripcion ≤ 500, evidencia ≤ 200. Checked at the top of submit_project().',pt:'nombre ≤ 100, area ≤ 50, descripcion ≤ 500, evidencia ≤ 200.',zh:'nombre ≤ 100, area ≤ 50, descripcion ≤ 500, evidencia ≤ 200,在 submit_project() 开头检查。'},
+   rust:`<span class="at">require!</span>(nombre.len() &lt;= 100, ...);\n<span class="at">require!</span>(area.len() &lt;= 50, ...);\n<span class="at">require!</span>(descripcion.len() &lt;= 500,...);\n<span class="at">require!</span>(evidencia.len() &lt;= 200,...);`,tag:'Contrato 2'},
+  {ic:'plug',title:'LEN calculado manualmente',desc:{es:'Cada struct define pub const LEN: usize para evitar realloc no autorizado y pagar exactamente el rent necesario.',en:'Each struct defines pub const LEN: usize to prevent unauthorized realloc and pay exactly the necessary rent.',pt:'Cada struct define pub const LEN: usize para gestão precisa de espaço.',zh:'每个结构体定义 pub const LEN: usize,精确管理空间,防止未授权 realloc。'},
+   rust:`<span class="kw">impl</span> UserAccount {\n  <span class="kw">pub const</span> LEN: <span class="at">usize</span> =\n    32 + 8 + 1 + 4 + 1;\n  <span class="cm">// Pubkey+u64+u8+u32+u8</span>\n}`,tag:'Todas las cuentas'},
+];
+const ICONS={shield:`<svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,info:`<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,check:`<svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>`,dollar:`<svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`,db:`<svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>`,lock:`<svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`,wave:`<svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>`,plug:`<svg viewBox="0 0 24 24"><path d="M14.5 10c-.83 0-1.5-.67-1.5-1.5v-5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5z"/><path d="M20.5 10H19V8.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/><path d="M9.5 14c.83 0 1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5S8 21.33 8 20.5v-5c0-.83.67-1.5 1.5-1.5z"/><path d="M3.5 14H5v1.5c0 .83-.67 1.5-1.5 1.5S2 16.33 2 15.5 2.67 14 3.5 14z"/></svg>`};
+const NSTRINGS={es:{n1t:'Proyecto aprobado — SkillProof DAO',n1d:'Tu proyecto fue aprobado (estado: 1). Skill Badge NFT de Blockchain emitido. +1 score.',n2t:'Validación recibida — SolanaSwap UI',n2d:shortAddr(WALLETS.bob)+' validó tu proyecto con categoria_rechazo: 2 (Proyecto incompleto).',n3t:'Mentoría aceptada — NFT Metadata Indexer',n3d:'Elena Vásquez ('+shortAddr(WALLETS.elena)+') aceptó ser tu mentora. request_mentoring() procesado.',n4t:'Proyecto rechazado — NFT Metadata Indexer',n4d:'estado: 2. Ahora puedes solicitar mentoría con request_mentoring().',n5t:'Actualización de protocolo v1.2',n5d:'SkillProof DAO migra a Solana Devnet actualizado. Program ID actualizado.'},
+en:{n1t:'Project approved — SkillProof DAO',n1d:'Your project was approved (estado: 1). Blockchain Skill Badge NFT minted. +1 score.',n2t:'Validation received — SolanaSwap UI',n2d:shortAddr(WALLETS.bob)+' validated your project with categoria_rechazo: 2 (Incomplete project).',n3t:'Mentorship accepted — NFT Metadata Indexer',n3d:'Elena Vásquez ('+shortAddr(WALLETS.elena)+') accepted to mentor you. request_mentoring() processed.',n4t:'Project rejected — NFT Metadata Indexer',n4d:'estado: 2. You can now request mentoring via request_mentoring().',n5t:'Protocol update v1.2',n5d:'SkillProof DAO migrates to updated Solana Devnet. Program ID updated.'},
+pt:{n1t:'Projeto aprovado — SkillProof DAO',n1d:'Seu projeto foi aprovado (estado: 1). Skill Badge NFT de Blockchain emitido. +1 score.',n2t:'Validação recebida — SolanaSwap UI',n2d:shortAddr(WALLETS.bob)+' validou seu projeto com categoria_rechazo: 2 (Projeto incompleto).',n3t:'Mentoria aceita — NFT Metadata Indexer',n3d:'Elena Vásquez ('+shortAddr(WALLETS.elena)+') aceitou ser sua mentora. request_mentoring() processado.',n4t:'Projeto rejeitado — NFT Metadata Indexer',n4d:'estado: 2. Agora você pode solicitar mentoria via request_mentoring().',n5t:'Atualização de protocolo v1.2',n5d:'SkillProof DAO migra para Solana Devnet atualizada. Program ID atualizado.'},
+zh:{n1t:'项目已通过 — SkillProof DAO',n1d:'您的项目已获批准 (estado: 1)。Blockchain 技能徽章NFT已铸造。+1 积分。',n2t:'收到验证 — SolanaSwap UI',n2d:shortAddr(WALLETS.bob)+' 验证了您的项目,categoria_rechazo: 2(项目不完整)。',n3t:'辅导已接受 — NFT Metadata Indexer',n3d:'Elena Vásquez ('+shortAddr(WALLETS.elena)+') 接受辅导您。request_mentoring() 已处理。',n4t:'项目被拒 — NFT Metadata Indexer',n4d:'estado: 2。现在可以通过 request_mentoring() 申请辅导。',n5t:'协议更新 v1.2',n5d:'SkillProof DAO 迁移至更新的 Solana Devnet。Program ID 已更新。'}};
+
+/* ════ STATE ════ */
+let walletOn=false,CP='home';
+// My Solana wallet
+const MY_WALLET=WALLETS.me;
+let myScore=127; // Matches project SkillProof DAO having score:127
+
+/* ════ NAV ════ */
+function go(p){
+  document.querySelectorAll('.page').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.nlinks button').forEach(e=>e.classList.remove('active'));
+  const pg=document.getElementById('page-'+p);if(pg)pg.classList.add('active');
+  const nb=document.getElementById('n-'+p);if(nb)nb.classList.add('active');
+  CP=p;window.scrollTo({top:0,behavior:'smooth'});
+  if(p==='projects'){rProjects();rvCards();}
+  if(p==='validate')rValidate();
+  if(p==='mentors')rMentors();
+  if(p==='profile')rProfile();
+  if(p==='notifs')rNotifs();
+  if(p==='security')rSecurity();
+  setTimeout(()=>{reveal();bindC();},100);
+}
+
+/* ════ AVATAR MODAL ════ */
+let pendingAvatarSrc = null;
+let currentAvatarSrc = null;
+let avActiveTab = 0;
+
+function openAvModal(){
+  if(!walletOn){ t('âš  Conecta tu wallet Solana primero'); return; }
+  pendingAvatarSrc = null;
+  const btn = document.getElementById('avSaveBtn');
+  if(btn){ btn.disabled = true; btn.style.opacity = '.4'; }
+  document.getElementById('avNftInput').value = '';
+  document.getElementById('avNftInfo').textContent = 'Introduce la dirección del NFT o de la wallet dueña';
+  document.getElementById('avNftInfo').className = 'av-nft-info';
+  document.getElementById('avNftPreview').innerHTML = 'NFT';
+  document.getElementById('avGalleryPreview').style.display = 'none';
+  document.getElementById('avModal').classList.add('open');
+  setTimeout(bindC, 150);
+}
+function closeAvModal(){
+  document.getElementById('avModal').classList.remove('open');
+}
+function switchAvTab(idx){
+  avActiveTab = idx;
+  document.querySelectorAll('.av-tab').forEach((t,i)=>t.classList.toggle('active',i===idx));
+  document.querySelectorAll('.av-panel').forEach((p,i)=>p.classList.toggle('active',i===idx));
+}
+function handleAvatarFile(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  if(file.size > 5*1024*1024){ t('⚠ Imagen demasiado grande — máx 5MB'); return; }
+  const reader = new FileReader();
+  reader.onload = ev => {
+    pendingAvatarSrc = ev.target.result;
+    const prev = document.getElementById('avGalleryPreview');
+    const img  = document.getElementById('avGalleryImg');
+    const name = document.getElementById('avGalleryName');
+    const sz   = document.getElementById('avGallerySize');
+    img.src = ev.target.result;
+    name.textContent = file.name;
+    sz.textContent = (file.size/1024).toFixed(1)+' KB';
+    prev.style.display = 'flex';
+    const btn = document.getElementById('avSaveBtn');
+    btn.disabled = false; btn.style.opacity = '1';
+  };
+  reader.readAsDataURL(file);
+}
+function previewNFT(addr){
+  addr = addr.trim();
+  const info = document.getElementById('avNftInfo');
+  const prev = document.getElementById('avNftPreview');
+  const btn  = document.getElementById('avSaveBtn');
+  pendingAvatarSrc = null;
+  btn.disabled = true; btn.style.opacity = '.4';
+  if(addr.length < 32){ prev.innerHTML='NFT'; info.textContent='Introduce la dirección del NFT o de la wallet dueña'; info.className='av-nft-info'; return; }
+  if(addr.length < 43 || addr.length > 44){ info.textContent='⚠ Dirección inválida — debe tener 43–44 caracteres (base58)'; info.className='av-nft-info err'; prev.innerHTML='✕'; return; }
+  // Simulación de lookup de metadatos NFT on-chain (Metaplex)
+  info.textContent = '⏳ Buscando metadatos on-chain…'; info.className='av-nft-info';
+  prev.innerHTML = '<div style="font-size:18px;animation:pulse 1s infinite">â—Ž</div>';
+  setTimeout(()=>{
+    // Demo: usar un avatar placeholder con los primeros chars de la dirección como seed visual
+    const hue  = addr.split('').reduce((a,c)=>a+c.charCodeAt(0),0) % 360;
+    const demo = `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(addr)}&backgroundColor=0d0d0d&radius=12`;
+    pendingAvatarSrc = demo;
+    prev.innerHTML = `<img src="${demo}" style="width:100%;height:100%;object-fit:cover;border-radius:8px" onerror="this.parentElement.innerHTML='✕'"/>`;
+    info.textContent = `◎ NFT encontrado · Mint: ${addr.slice(0,6)}…${addr.slice(-4)}`;
+    info.className = 'av-nft-info ok';
+    btn.disabled = false; btn.style.opacity = '1';
+  }, 1200);
+}
+function saveAvatar(){
+  if(!pendingAvatarSrc) return;
+  currentAvatarSrc = pendingAvatarSrc;
+  const pav = document.getElementById('pav');
+  if(pav){
+    pav.innerHTML = `<img src="${currentAvatarSrc}" alt="avatar" style="width:100%;height:100%;object-fit:cover;border-radius:14px"/>`;
+    pav.style.padding = '0';
+    pav.style.background = 'none';
+    pav.style.border = 'none';
+  }
+  // Actualizar también el avatar del wallet panel
+  const wpav = document.querySelector('.wp-avatar');
+  if(wpav){
+    wpav.innerHTML = `<img src="${currentAvatarSrc}" style="width:100%;height:100%;object-fit:cover;border-radius:12px" alt="avatar"/>`;
+    wpav.style.padding = '0';
+    wpav.style.background = 'none';
+    wpav.style.border = 'none';
+  }  closeAvModal();
+  t('✓ Foto de perfil actualizada');
+  // Registrar como actividad
+  registerActivity('avatar');
+}
+
+/* ════ ACTIVITY GRID — sistema de commits ════ */
+// Actividades: array de {date: 'YYYY-MM-DD', type: 'project'|'validation'|'badge'|'mentor'|'avatar', label: string}
+const ACTIVITY_DATA = (()=>{
+  const acts = [];
+  const now  = new Date();
+  // Poblar con actividades de los proyectos del usuario
+  PROJECTS.forEach(p=>{
+    if(p.aut === MY_WALLET){
+      const d = new Date(p.ts);
+      acts.push({date: d.toISOString().slice(0,10), type:'project', label:`Subió "${p.n}"`});
+      if(p.st===1) acts.push({date: new Date(p.ts + 86400000*2).toISOString().slice(0,10), type:'badge', label:`Badge NFT — ${p.a}`});
+    }
+    // Validaciones hechas por el usuario
+    p.comments.forEach(c=>{
+      if(c.v === MY_WALLET){
+        const d = new Date(p.ts + Math.random()*86400000*3);
+        acts.push({date: d.toISOString().slice(0,10), type:'validation', label:`Validó "${p.n}"`});
+      }
+    });
+  });
+  // Añadir algunas actividades de relleno para demostración visual
+  const types = ['project','validation','badge','mentor'];
+  for(let i=0; i<35; i++){
+    const d = new Date(now);
+    d.setDate(d.getDate() - Math.floor(Math.random()*180));
+    acts.push({date: d.toISOString().slice(0,10), type: types[Math.floor(Math.random()*types.length)], label:''});
+  }
+  return acts;
+})();
+
+function registerActivity(type, label=''){
+  const today = new Date().toISOString().slice(0,10);
+  ACTIVITY_DATA.push({date:today, type, label});
+  if(document.getElementById('page-profile').classList.contains('active')) buildActivityGrid();
+}
+
+function buildActivityGrid(){
+  const grid  = document.getElementById('activity-grid');
+  const mthEl = document.getElementById('activity-months');
+  const sumEl = document.getElementById('activity-summary');
+  const wrap  = document.getElementById('activity-wrap');
+  if(!grid || !walletOn){ if(wrap)wrap.style.display='none'; return; }
+  wrap.style.display = 'block';
+
+  // 52 semanas hacia atrás desde hoy
+  const WEEKS = 52;
+  const today = new Date();
+  const cells = []; // 364 días
+  for(let i = WEEKS*7 - 1; i >= 0; i--){
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    cells.push({date: d.toISOString().slice(0,10), count:0, events:[]});
+  }
+  // Contar actividades por día
+  ACTIVITY_DATA.forEach(a=>{
+    const cell = cells.find(c=>c.date===a.date);
+    if(cell){ cell.count++; if(a.label) cell.events.push(a.label); }
+  });
+
+  // Total y streak
+  const total = ACTIVITY_DATA.length;
+  let streak = 0;
+  for(let i = cells.length-1; i>=0; i--){
+    if(cells[i].count > 0) streak++;
+    else if(i < cells.length-1) break;
+  }
+  const stEl = document.getElementById('streak-txt');
+  const stLbl = {es:`${streak} día${streak!==1?'s':''} seguido${streak!==1?'s':''}`,en:`${streak} day${streak!==1?'s':''} streak`,pt:`${streak} dia${streak!==1?'s':''} seguido${streak!==1?'s':''}`,zh:`连续 ${streak} 天`}[lang]||`${streak}d`;
+  if(stEl) stEl.textContent = stLbl;
+
+  // Meses labels
+  const months = {es:['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],en:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],pt:['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],zh:['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月']}[lang]||[];
+  const mthHTML = [];
+  let lastMonth = -1;
+  for(let w=0; w<WEEKS; w++){
+    const d = cells[w*7];
+    const m = new Date(d.date).getMonth();
+    if(m !== lastMonth){ mthHTML.push(`<span class="activity-month">${months[m]||''}</span>`); lastMonth=m; }
+    else mthHTML.push('<span class="activity-month"></span>');
+  }
+  if(mthEl) mthEl.innerHTML = mthHTML.join('');
+
+  // Día labels
+  const dayNames = {es:['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'],en:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],pt:['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'],zh:['日','一','二','三','四','五','六']}[lang]||[];
+  const dlblMon = document.getElementById('dlbl-mon');
+  const dlblWed = document.getElementById('dlbl-wed');
+  const dlblFri = document.getElementById('dlbl-fri');
+  if(dlblMon) dlblMon.textContent = dayNames[1]||'Mon';
+  if(dlblWed) dlblWed.textContent = dayNames[3]||'Wed';
+  if(dlblFri) dlblFri.textContent = dayNames[5]||'Fri';
+
+  // Intensidad: 0=sin act, 1–4 según conteo
+  const typeColor = {project:'◎ Proyecto',validation:'✓ Validación',badge:'🏅 Badge',mentor:'🤝 Mentoría',avatar:'🖼 Avatar'};
+  grid.innerHTML = cells.map(c=>{
+    const v = c.count===0?0:c.count===1?1:c.count===2?2:c.count<=4?3:4;
+    const dateStr = new Date(c.date).toLocaleDateString(lang==='zh'?'zh-CN':lang==='pt'?'pt-BR':lang==='en'?'en-US':'es-ES',{month:'short',day:'numeric'});
+    const tipContent = c.count===0
+      ? `${dateStr} · sin actividad`
+      : `${dateStr} · ${c.count} acción${c.count>1?'es':''} on-chain${c.events.length?' · '+c.events[0]:''}`;
+    return `<div class="ac" data-v="${v}"><div class="ac-tip">${tipContent}</div></div>`;
+  }).join('');
+
+  // Summary
+  const actTotal = {es:`${total} acciones on-chain en el último año`,en:`${total} on-chain actions in the past year`,pt:`${total} ações on-chain no último ano`,zh:`过去一年 ${total} 次链上操作`}[lang]||`${total} on-chain`;
+  if(sumEl) sumEl.textContent = actTotal;
+
+  // Título
+  const titleEl = document.getElementById('activity-title');
+  if(titleEl) titleEl.textContent = {es:'Actividad on-chain',en:'On-chain activity',pt:'Atividade on-chain',zh:'链上活动'}[lang]||'On-chain activity';
+
+  setTimeout(bindC, 100);
+}
+
+/* ════ AVATAR MODAL ════ */
+let myBio = '';
+let currentProjTab = 'all'; // 'all'|'1'|'0'|'2'
+
+function openWP(){
+  document.getElementById('wpanel').classList.add('open');
+  document.getElementById('wpo').classList.add('open');
+  rWP();
+  setTimeout(bindC,150);
+}
+function closeWP(){
+  document.getElementById('wpanel').classList.remove('open');
+  document.getElementById('wpo').classList.remove('open');
+}
+
+function rWP(){
+  const panel=document.getElementById('wpc');
+  const title=document.getElementById('wptitle');
+  if(!walletOn){
+    title.textContent=T('wp.title.conn');
+    const walletList=[
+      {name:'Phantom',  icon:'👻', desc:'phantom.app',    id:'phantom'},
+      {name:'Backpack', icon:'🎒', desc:'backpack.app',   id:'backpack'},
+      {name:'Solflare', icon:'🔆', desc:'solflare.com',   id:'solflare'},
+    ];
+    panel.innerHTML=`
+      <div class="wp-noconn">
+        <div class="sol-logo">â—Ž</div>
+        <h4>${T('wp.title.conn')}</h4>
+        <p>${T('wp.desc')}</p>
+        <div class="wp-wallets">
+          ${walletList.map(w=>`
+            <button class="wp-wallet-btn" onclick="connectWallet('${w.id}')">
+              <div class="wico" style="background:rgba(153,69,255,0.1);border:.5px solid rgba(153,69,255,0.2)">${w.icon}</div>
+              <div>
+                <div class="wname">${w.name}</div>
+                <div class="wdesc">${w.desc}</div>
+              </div>
+            </button>`).join('')}
+        </div>
+        <p style="font-size:11px;color:var(--text3);margin-top:8px">Solana Devnet · Anchor Framework</p>
+      </div>`;
+  } else {
+    title.textContent=T('wp.title.profile');
+    const sc=myScore;
+    const nv=sc>=100?3:sc>=50?2:sc>=10?1:0;
+    const pct=Math.min((sc/100)*100,100);
+    const lvLabel={es:['Nivel 0','Nivel 1','Nivel 2','Nivel 3 — Mentor'],en:['Level 0','Level 1','Level 2','Level 3 — Mentor'],pt:['Nível 0','Nível 1','Nível 2','Nível 3 — Mentor'],zh:['0级','1级','2级','3级 — 导师']}[lang]||[];
+    const myApproved=PROJECTS.filter(p=>p.aut===MY_WALLET&&p.st===1);
+    const myBadges=myApproved.map(p=>`<span class="bpil" style="font-size:11px;padding:3px 10px">â—Ž ${p.a}</span>`).join('');
+    const actions=[
+      {icon:`<svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,label:{es:'Ver perfil completo',en:'View full profile',pt:'Ver perfil completo',zh:'查看完整主页'},page:'profile'},
+      {icon:`<svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>`,label:{es:'Subir proyecto',en:'Submit project',pt:'Enviar projeto',zh:'提交项目'},page:'upload'},
+      {icon:`<svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>`,label:{es:'Validar proyectos',en:'Validate projects',pt:'Validar projetos',zh:'验证项目'},page:'validate'},
+    ];
+    panel.innerHTML=`
+      <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:18px">
+        <div class="wp-avatar" style="padding:0;background:none;border:none">${generateAvatar(MY_WALLET, 64)}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:11px;color:var(--text3);font-family:monospace;word-break:break-all;line-height:1.5;margin-bottom:6px">${MY_WALLET}</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button class="wp-copy" onclick="copyAddr()">${T('wp.copy')}</button>
+            <span class="onboard-chip" style="font-size:10px;padding:3px 8px">register_user() ✓</span>
+          </div>
+        </div>
+      </div>
+      <div class="wp-stats">
+        <div class="wp-stat"><div class="wp-snum">${sc}</div><div class="wp-slbl">Score (u64)</div></div>
+        <div class="wp-stat"><div class="wp-snum">${nv}</div><div class="wp-slbl">${lang==='zh'?'等级':lang==='en'?'Level':lang==='pt'?'Nível':'Nivel'} (u8)</div></div>
+        <div class="wp-stat"><div class="wp-snum">${myApproved.length}</div><div class="wp-slbl">${lang==='zh'?'徽章':lang==='en'?'Badges':lang==='pt'?'Badges':'Badges'}</div></div>
+        <div class="wp-stat"><div class="wp-snum">1</div><div class="wp-slbl">${lang==='zh'?'辅导':lang==='en'?'Mentorships':lang==='pt'?'Mentorias':'Mentorías'}</div></div>
+      </div>
+      <div class="wp-level">
+        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+          <span style="color:var(--g);font-weight:600">${lvLabel[nv]||'Nivel '+nv}</span>
+          <span style="color:var(--text3)">${sc} / 100+</span>
+        </div>
+        <div class="wp-lbar-track"><div class="wp-lbar-fill" style="width:${pct}%"></div></div>
+      </div>
+      ${myBadges?`<p class="wp-section-title">Skill Badges</p><div class="wp-badges">${myBadges}</div>`:''}
+      <p class="wp-section-title">${lang==='zh'?'快速操作':lang==='en'?'Quick actions':lang==='pt'?'Ações rápidas':'Acciones rápidas'}</p>
+      <div class="wp-actions">
+        ${actions.map(a=>`<button class="wp-action-btn" onclick="closeWP();go('${a.page}')">${a.icon}<span>${(a.label[lang]||a.label.es)}</span></button>`).join('')}
+      </div>
+      <button class="wp-disconnect" onclick="disconnectWallet()">â—Ž ${T('wp.disconnect')}</button>`;
+  }
+  setTimeout(bindC,100);
+}
+
+function connectWallet(provider){
+  walletOn=true;
+  const wb=document.getElementById('wb');
+  wb.textContent=shortAddr(MY_WALLET);
+  wb.classList.add('on');
+  t('◎ '+provider.charAt(0).toUpperCase()+provider.slice(1)+' — '+shortAddr(MY_WALLET)+' — register_user() ✓');
+  rWP();
+  rProfile();
+  setTimeout(bindC,200);
+}
+
+function disconnectWallet(){
+  walletOn=false;
+  const wb=document.getElementById('wb');
+  wb.textContent=T('nav.connect');
+  wb.classList.remove('on');
+  t(T('toast.wallet_off'));
+  closeWP();
+  rProfile();
+}
+
+function copyAddr(){
+  navigator.clipboard?.writeText(MY_WALLET).catch(()=>{});
+  const btn=document.querySelector('.wp-copy');
+  if(btn){btn.textContent=T('wp.copied')||'¡Copiado!';setTimeout(()=>btn.textContent=T('wp.copy')||'Copiar',1800);}
+}
+
+// Mantener toggleW como alias para compatibilidad con cualquier referencia legacy
+function toggleW(){walletOn?disconnectWallet():openWP();}
+
+/* ════ TOAST ════ */
+let tTimer;
+function t(msg){clearTimeout(tTimer);const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');tTimer=setTimeout(()=>el.classList.remove('show'),2800);}
+
+/* ════ STATUS LABELS (from contract: u8 0=pending 1=approved 2=rejected) ════ */
+const SSTAT={
+  1:{es:'Aprobado',en:'Approved',pt:'Aprovado',zh:'已通过',cls:'sa'},
+  0:{es:'Pendiente',en:'Pending',pt:'Pendente',zh:'待审',cls:'sp'},
+  2:{es:'Rechazado',en:'Rejected',pt:'Rejeitado',zh:'已拒绝',cls:'sr'},
+};
+
+/* ════ CARD HTML ════ */
+function pCard(p,i){
+  const ss=SSTAT[p.st]||SSTAT[0];
+  return `<div class="pcard" onclick="op(${p.id})" data-a="${p.a}" data-s="${p.st}" style="transition-delay:${i*55}ms">
+    <div class="ctop"><span class="ca">${p.a}</span><span class="cs ${ss.cls}">${ss[lang]||ss.es}</span></div>
+    <div class="ctit">${p.n}</div>
+    <div class="cdesc">${p.d.slice(0,108)}…</div>
+    <div class="cft">
+      <div class="cau">
+        <div class="sol-av">${p.aut.slice(0,2)}</div>
+        <span class="sol-addr">${shortAddr(p.aut)}</span>
+      </div>
+      <span class="sbdg">Score ${p.sc}</span>
+    </div>
+  </div>`;
+}
+function rvCards(){setTimeout(()=>{document.querySelectorAll('.pcard').forEach((e,i)=>setTimeout(()=>e.classList.add('rv'),i*58));},80);}
+
+function rHome(){const g=document.getElementById('hg');if(g){g.innerHTML=PROJECTS.slice(0,6).map((p,i)=>pCard(p,i)).join('');rvCards();}}
+function rProjects(){
+  const g=document.getElementById('pg'),c=document.getElementById('pcnt');
+  if(g)g.innerHTML=PROJECTS.map((p,i)=>pCard(p,i)).join('');
+  if(c)c.textContent=PROJECTS.length+(lang==='zh'?' 个项目':lang==='pt'?' projetos':lang==='en'?' projects':' proyectos');
+}
+
+/* fc — filtro dual: 'area' o 'status', independientes por grupo dentro de .flt */
+function fc(btn,val,gid,type){
+  // Desactivar solo los botones del mismo grupo (misma fila de tipo)
+  const allFb=btn.closest('.flt').querySelectorAll('.fb');
+  // Separar grupos: antes y después del .flt-sep
+  const sep=btn.closest('.flt').querySelector('.flt-sep');
+  if(sep){
+    const siblings=Array.from(allFb);
+    const sepIdx=Array.from(btn.closest('.flt').children).indexOf(sep);
+    const btnIdx=Array.from(btn.closest('.flt').children).indexOf(btn);
+    const group=btnIdx<sepIdx?'before':'after';
+    siblings.forEach(b=>{
+      const bIdx=Array.from(btn.closest('.flt').children).indexOf(b);
+      const bGroup=bIdx<sepIdx?'before':'after';
+      if(bGroup===group)b.classList.remove('active');
+    });
+  } else {
+    allFb.forEach(b=>b.classList.remove('active'));
+  }
+  btn.classList.add('active');
+
+  const g=document.getElementById(gid);if(!g)return;
+  // Recolectar filtros activos de este grid
+  const fltEl=btn.closest('.flt');
+  let areaVal='all', statusVal='all';
+  fltEl.querySelectorAll('.fb.active').forEach(b=>{
+    const oc=b.getAttribute('onclick')||'';
+    if(oc.includes(",'area'"))areaVal=b.getAttribute('onclick').match(/'([^']+)','[^']+','area'/)?.[1]||'all';
+    if(oc.includes(",'status'"))statusVal=b.getAttribute('onclick').match(/'([^']+)','[^']+','status'/)?.[1]||'all';
+  });
+  // Aplicar ambos filtros
+  g.querySelectorAll('.pcard').forEach(c=>{
+    const aMatch=areaVal==='all'||c.dataset.a===areaVal;
+    const sMatch=statusVal==='all'||c.dataset.s===statusVal;
+    c.style.display=(aMatch&&sMatch)?'':'none';
+  });
+}
+
+/* ════ MODAL ════ */
+function op(id){
+  const p=PROJECTS.find(x=>x.id===id);if(!p)return;
+  document.getElementById('mtit').textContent=p.n;
+  const ss=SSTAT[p.st]||SSTAT[0];
+  // validate_project: require! validator.wallet != project.author && validator.score >= 50 && estado == 0
+  const canValidate=walletOn && myScore>=50 && p.aut!==MY_WALLET && p.st===0;
+  const catLabels={1:T('cat.1'),2:T('cat.2'),3:T('cat.3')};
+  const comments=p.comments.map(c=>`<div class="vitem">
+    <span style="font-size:14px;color:${c.ok?'var(--g)':'var(--red)'};margin-top:1px">${c.ok?'✓':'✕'}</span>
+    <div>
+      <p class="vcmt">${c.txt||''}</p>
+      <p class="vmeta">${shortAddr(c.v)} · Score ${c.sc}${!c.ok&&c.cat?` · cat: ${c.cat} — ${catLabels[c.cat]||''}`:''}</p>
+    </div>
+  </div>`).join('');
+  const L={area:{en:'Area',pt:'Área',zh:'领域',es:'Área'},desc:{en:'Description',pt:'Descrição',zh:'描述',es:'Descripción'},ev:{en:'Evidence',pt:'Evidência',zh:'证明',es:'Evidencia'},auth:{en:'Author',pt:'Autor',zh:'作者',es:'Autor'},ment:{en:'Request mentoring',pt:'Solicitar mentoria',zh:'申请辅导',es:'Solicitar mentoría'},val:{en:'Validations',pt:'Validações',zh:'验证',es:'Validaciones'}};
+  const Lv=k=>(L[k]||{})[lang]||(L[k]||{}).es||k;
+  // Show mentoring button only for rejected projects (estado == 2) — fiel al contrato
+  const mentorBtn=p.st===2?`<button class="bgh" onclick="cm();go('mentors')" style="font-size:11px;padding:8px 15px">â—Ž ${Lv('ment')}</button>`:'';
+  document.getElementById('mbdy').innerHTML=`
+    <div class="mf"><label>${Lv('area')}</label><p>
+      <span class="ca">${p.a}</span> &nbsp;
+      <span class="cs ${ss.cls}">${ss[lang]||ss.es}</span> &nbsp;
+      <span class="sol-badge">${p.val}/3 ${lang==='zh'?'验证':lang==='en'?'validations':lang==='pt'?'validações':'validaciones'}</span>
+    </p></div>
+    <div class="mf" style="margin-top:12px"><label>${Lv('desc')}</label><p>${p.d}</p></div>
+    <div class="mf" style="margin-top:12px"><label>${Lv('ev')}</label><p><a href="${p.ev}" target="_blank">${p.ev}</a></p></div>
+    <div class="mf" style="margin-top:12px"><label>${Lv('auth')}</label><p>
+      <span style="font-family:monospace;font-size:12px">${p.aut}</span><br>
+      <span style="color:var(--g);font-size:12px">Score ${p.sc}</span>
+    </p></div>
+    ${p.st===0?`<div style="background:var(--bg3);border:.5px solid var(--border);border-radius:var(--r);padding:12px;margin-top:12px;font-size:12px;color:var(--text2)">
+      <span style="color:var(--amb);font-weight:600">check_project_approval(): </span>
+      ${p.val>=3?'✓ Listo para aprobar':p.val>=2?'⏳ Esperando 48h o 1 validación más':'⏳ Necesita '+(3-p.val)+' validación(es) más'}
+    </div>`:''}
+    <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+      ${canValidate?`<button class="bap" onclick="openValidate(${id})">✓ ${T('val.approve')}</button><button class="bre" onclick="openReject(${id})">✕ ${T('val.reject')}</button>`:''}
+      ${mentorBtn}
+    </div>
+    ${p.comments.length?`<div class="mvld"><p style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:9px">${Lv('val')} (${p.comments.length})</p>${comments}</div>`:''}`;
+  document.getElementById('pm').classList.add('open');
+}
+function cm(){document.getElementById('pm').classList.remove('open');}
+document.getElementById('pm').addEventListener('click',function(e){if(e.target===this)cm();});
+
+/* validate_project — aprobado: true, categoria_rechazo: 0, comentario: "" */
+function openValidate(id){
+  const p=PROJECTS.find(x=>x.id===id);if(!p)return;
+  p.val=p.val+1;
+  // check_project_approval logic from contract
+  const now=Date.now();
+  const hours48=48*60*60*1000;
+  if(p.val>=3||(p.val>=2&&(now-p.ts)>=hours48)){p.st=1;p.sc=p.sc+1;}
+  p.comments.push({v:MY_WALLET,ok:true,cat:0,txt:'',sc:myScore});
+  myScore = myScore + 2; // saturating_add(2)
+  registerActivity('validation', `Validó "${p.n}"`);
+  t(T('toast.val'));
+  cm();rHome();if(CP==='projects')rProjects();if(CP==='validate')rValidate();rProfile();
+}
+
+/* validate_project — aprobado: false, categoria_rechazo: u8 (1/2/3) */
+function openReject(id){
+  const p=PROJECTS.find(x=>x.id===id);if(!p)return;
+  const cats=[{v:1,l:'1 — '+T('cat.1')},{v:2,l:'2 — '+T('cat.2')},{v:3,l:'3 — '+T('cat.3')}];
+  // Inline prompt for rejection category (matches contract: categoria_rechazo ∈ {1,2,3})
+  document.getElementById('mbdy').innerHTML+=`
+    <div id="rej-form" style="margin-top:16px;padding:14px;background:rgba(255,68,68,0.05);border:.5px solid rgba(255,68,68,0.2);border-radius:var(--r)">
+      <p style="font-size:12px;color:var(--red);font-weight:600;margin-bottom:10px">✕ ${T('val.cat_label')}</p>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px">
+        ${cats.map(c=>`<label style="display:flex;align-items:center;gap:8px;cursor:none;font-size:13px;color:var(--text2)"><input type="radio" name="rejcat" value="${c.v}" style="accent-color:var(--red)"> ${c.l}</label>`).join('')}
+      </div>
+      <input type="text" id="rej-comment" placeholder="${T('val.comment')}" maxlength="300" style="width:100%;background:var(--inp);border:.5px solid rgba(255,68,68,0.3);border-radius:var(--r);color:var(--text);font-family:var(--fb);font-size:13px;padding:9px 12px;outline:none;margin-bottom:10px">
+      <button class="bre" style="width:100%" onclick="submitReject(${id})">✕ ${T('val.reject')}</button>
+    </div>`;
+  setTimeout(bindC,100);
+}
+
+function submitReject(id){
+  const cat=document.querySelector('input[name="rejcat"]:checked');
+  if(!cat){t('âš  '+T('cat.1')+' / '+T('cat.2')+' / '+T('cat.3'));return;}
+  const catV=parseInt(cat.value); // u8: 1, 2, or 3
+  if(catV<1||catV>3){t('âš  categoria_rechazo debe ser 1, 2 o 3');return;}
+  const comment=(document.getElementById('rej-comment')||{}).value||'';
+  const p=PROJECTS.find(x=>x.id===id);if(!p)return;
+  p.comments.push({v:MY_WALLET,ok:false,cat:catV,txt:comment,sc:myScore});
+  // After enough rejections mark as rejected (estado: 2)
+  const rejCount=p.comments.filter(c=>!c.ok).length;
+  if(rejCount>=2)p.st=2;
+  t(T('toast.rej'));
+  cm();rHome();if(CP==='projects')rProjects();if(CP==='validate')rValidate();rProfile();
+}
+
+/* ════ VALIDATE PAGE ════ */
+function rValidate(){
+  const el=document.getElementById('vl');if(!el)return;
+  // Only show estado == 0 (pending) — matches require!(project.estado == 0)
+  const pd=PROJECTS.filter(p=>p.st===0);
+  if(!pd.length){el.innerHTML=`<p style="color:var(--text3)">${lang==='zh'?'没有待审项目。':lang==='en'?'No pending projects.':lang==='pt'?'Nenhum projeto pendente.':'No hay proyectos pendientes.'}</p>`;return;}
+  const evlbl={en:'View evidence',pt:'Ver evidência',zh:'查看证明',es:'Ver evidencia'}[lang]||'Ver evidencia';
+  el.innerHTML=pd.map(p=>`<div class="vcrd">
+    <div style="display:flex;justify-content:space-between;margin-bottom:7px">
+      <span class="ca">${p.a}</span>
+      <span style="font-size:11px;color:var(--text3)">${p.val}/3 val · <span class="sol-badge">${lang==='zh'?'待审':lang==='en'?'pending':lang==='pt'?'pendente':'pendiente'}</span></span>
+    </div>
+    <h3>${p.n}</h3>
+    <p style="font-size:12px;font-family:monospace;color:var(--text3);margin:4px 0 8px">${shortAddr(p.aut)} · Score ${p.sc}</p>
+    <p style="font-size:13px;color:var(--text2);line-height:1.6">${p.d.slice(0,140)}…</p>
+    <p style="font-size:12px;color:var(--text3);margin-top:7px"><a href="${p.ev}" target="_blank">${evlbl} ↗</a></p>
+    ${walletOn&&myScore>=50&&p.aut!==MY_WALLET?`
+    <div class="vact">
+      <button class="bap" onclick="openValidate(${p.id})">✓ ${T('val.approve')}</button>
+      <button class="bre" onclick="op(${p.id});setTimeout(()=>openReject(${p.id}),100)">✕ ${T('val.reject')}</button>
+      <button class="bgh" style="font-size:11px;padding:8px 13px" onclick="op(${p.id})">${T('val.detail')}</button>
+    </div>`:`
+    <div style="margin-top:14px;font-size:12px;color:var(--text3)">
+      ${!walletOn?'âš  Conecta tu wallet Solana':myScore<50?'âš  Score insuficiente ('+myScore+' < 50)':p.aut===MY_WALLET?'âš  No puedes validar tu propio proyecto':''}
+    </div>`}
+  </div>`).join('');
+  setTimeout(()=>{reveal();bindC();},80);
+}
+
+/* ════ MENTORS ════ */
+function rMentors(){
+  const g=document.getElementById('mg');if(!g)return;
+  // request_mentoring requires rejected projects from the user
+  const rejectedProjects=PROJECTS.filter(p=>p.st===2&&p.aut===MY_WALLET);
+  const rb={en:'Request mentoring',pt:'Solicitar mentoria',zh:'申请辅导',es:'Solicitar mentoría'}[lang]||'Solicitar mentoría';
+  const lv={en:'Level',pt:'Nível',zh:'级',es:'Nivel'}[lang]||'Nivel';
+  const ms={en:'mentorships',pt:'mentorias',zh:'次辅导',es:'mentorías'}[lang]||'mentorías';
+  g.innerHTML=MENTORS.map(m=>`<div class="mcrd">
+    <div class="mtop">
+      <div class="mav">${m.i}</div>
+      <div>
+        <div class="mname">${m.n}</div>
+        <div class="msc">${shortAddr(m.wallet)}</div>
+        <div class="mscore">Score ${m.sc} · ${lv} ${m.nivel} · ${m.cnt} ${ms}</div>
+      </div>
+    </div>
+    <div class="mareas">${m.a.map(a=>`<span class="atag">${a}</span>`).join('')}</div>
+    ${walletOn&&rejectedProjects.length>0?
+      `<select style="width:100%;background:var(--inp);border:.5px solid var(--border2);border-radius:var(--r);color:var(--text);font-family:var(--fb);font-size:12px;padding:8px;margin-bottom:8px;cursor:none;outline:none">
+        <option value="">${lang==='zh'?'选择被拒绝的项目':lang==='en'?'Select rejected project':lang==='pt'?'Selecionar projeto rejeitado':'Seleccionar proyecto rechazado'}</option>
+        ${rejectedProjects.map(p=>`<option value="${p.id}">${p.n}</option>`).join('')}
+      </select>
+      <button class="breq" onclick="t('${T('toast.ment')} — ${m.n} (${shortAddr(m.wallet)})')">${rb}</button>
+      <p class="mentor-req">mentor.nivel = ${m.nivel} ≥ 3 ✓ · +5 score al completar</p>`
+      :walletOn?`<button class="breq" style="opacity:.4;cursor:not-allowed" disabled>${lang==='zh'?'没有被拒绝的项目':lang==='en'?'No rejected projects':lang==='pt'?'Sem projetos rejeitados':'Sin proyectos rechazados'}</button>
+      <p class="mentor-req" style="color:var(--red)">${lang==='zh'?'require!(estado == 2)':lang==='en'?'require!(estado == 2) — no rejected projects found':'require!(estado == 2) — sin proyectos rechazados'}</p>`
+      :`<button class="breq" style="opacity:.4;cursor:not-allowed" disabled>${lang==='zh'?'连接 Solana 钱包':lang==='en'?'Connect Solana wallet':lang==='pt'?'Conectar carteira Solana':'Conectar wallet Solana'}</button>`}
+  </div>`).join('');
+  setTimeout(()=>{reveal();bindC();},80);
+}
+
+/* ════ PROFILE ════ */
+function toggleBioEdit(){
+  const txt=document.getElementById('pbio-text');
+  const ta=document.getElementById('pbio');
+  const btn=document.getElementById('pbio-editbtn');
+  if(!ta)return;
+  if(ta.style.display==='none'){
+    ta.value=myBio||txt.textContent;
+    ta.style.display='block';txt.style.display='none';
+    btn.textContent='✓ Guardar';
+  } else {
+    myBio=ta.value.trim()||ta.placeholder;
+    txt.textContent=myBio;
+    ta.style.display='none';txt.style.display='block';
+    btn.textContent='✏ Editar';
+    t('✓ Presentación guardada');
+  }
+}
+
+function switchProjTab(tab){
+  currentProjTab=tab;
+  document.querySelectorAll('.ptab').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+  renderProjTab();
+}
+
+function renderProjTab(){
+  const mpg=document.getElementById('mpg');if(!mpg)return;
+  const mine=PROJECTS.filter(p=>p.aut===MY_WALLET);
+  let filtered;
+  if(currentProjTab==='all')filtered=mine;
+  else filtered=mine.filter(p=>String(p.st)===currentProjTab);
+  if(!filtered.length){
+    const empty={es:{all:'Sin proyectos',1:'Sin proyectos aprobados',0:'Sin proyectos pendientes',2:'Sin proyectos rechazados'},en:{all:'No projects',1:'No approved projects',0:'No pending projects',2:'No rejected projects'},pt:{all:'Sem projetos',1:'Sem projetos aprovados',0:'Sem projetos pendentes',2:'Sem projetos rejeitados'},zh:{all:'没有项目',1:'没有已通过项目',0:'没有待审项目',2:'没有被拒绝项目'}};
+    mpg.innerHTML=`<p style="color:var(--text3);font-size:13px;grid-column:1/-1">${(empty[lang]||empty.es)[currentProjTab]}</p>`;
+    return;
+  }
+  mpg.innerHTML=filtered.map((p,i)=>pCard(p,i)).join('');
+  setTimeout(()=>filtered.forEach((_,i)=>{const el=mpg.querySelectorAll('.pcard')[i];if(el)setTimeout(()=>el.classList.add('rv'),i*60);}),80);
+}
+
+/* ════ AVATAR GENERATOR — SVG determinista desde wallet ════ */
+function generateAvatar(seed, size){
+  // Hash simple de la seed para colores y formas
+  let h = 0;
+  for(let i = 0; i < seed.length; i++) h = ((h << 5) - h + seed.charCodeAt(i)) | 0;
+  const abs = Math.abs(h);
+
+  const palettes = [
+    ['#ff6e2d','#004d29','#001f11'],  // verde
+    ['#9945FF','#3d1a70','#1a0a30'],  // violeta Solana
+    ['#4a9eff','#1a3a70','#091828'],  // azul
+    ['#f5a623','#7a4a00','#301c00'],  // ámbar
+    ['#00d4ff','#005a70','#002530'],  // cyan
+    ['#ff6b6b','#7a1a1a','#300a0a'],  // rojo
+  ];
+  const pal = palettes[abs % palettes.length];
+  const bg  = pal[2];
+  const mid = pal[1];
+  const fg  = pal[0];
+
+  // Iniciales o símbolo
+  const initials = seed.length >= 4
+    ? seed.slice(0,2).toUpperCase()
+    : 'â—Ž';
+
+  // Patrón de fondo: grid de puntos con opacidad variable
+  let dots = '';
+  const cols = 5, rows = 5;
+  const cellW = size / cols;
+  const cellH = size / rows;
+  for(let r = 0; r < rows; r++){
+    for(let c = 0; c < cols; c++){
+      const val = (abs >> ((r*cols+c) % 31)) & 1;
+      if(val){
+        const op = 0.15 + ((abs >> (r+c)) & 3) * 0.12;
+        dots += `<rect x="${c*cellW+cellW*.2}" y="${r*cellH+cellH*.2}" width="${cellW*.6}" height="${cellH*.6}" rx="2" fill="${fg}" opacity="${op.toFixed(2)}"/>`;
+      }
+    }
+  }
+
+  // Forma central: hexágono o círculo según paridad
+  const cx = size/2, cy = size/2;
+  const useHex = abs % 2 === 0;
+  let centerShape = '';
+  if(useHex){
+    const r = size * 0.28;
+    const pts = Array.from({length:6},(_,i)=>{
+      const a = (Math.PI/3)*i - Math.PI/6;
+      return `${(cx+r*Math.cos(a)).toFixed(1)},${(cy+r*Math.sin(a)).toFixed(1)}`;
+    }).join(' ');
+    centerShape = `<polygon points="${pts}" fill="${mid}" stroke="${fg}" stroke-width="1.5" opacity="0.9"/>`;
+  } else {
+    centerShape = `<circle cx="${cx}" cy="${cy}" r="${size*0.28}" fill="${mid}" stroke="${fg}" stroke-width="1.5" opacity="0.9"/>`;
+  }
+
+  // Texto de iniciales centrado
+  const fontSize = size * 0.22;
+  const textEl = `<text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="central"
+    font-family="'Syne',sans-serif" font-size="${fontSize}" font-weight="800"
+    fill="${fg}" letter-spacing="1">${initials}</text>`;
+
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg" style="border-radius:16px;display:block">
+    <rect width="${size}" height="${size}" fill="${bg}" rx="16"/>
+    ${dots}
+    ${centerShape}
+    ${textEl}
+  </svg>`;
+}
+
+function rProfile(){
+  const sc = walletOn ? myScore : 0;
+  const nv = sc>=100?3:sc>=50?2:sc>=10?1:0;
+  const pct = Math.min((sc/100)*100, 100);
+  const lbls = {
+    es:['Solo ver','Puede votar (score≥10)','Validar + votar + propuestas','Puede ser mentor'],
+    en:['View only','Can vote (score≥10)','Validate + vote + proposals','Can be mentor'],
+    pt:['Apenas ver','Pode votar (score≥10)','Validar + votar + propostas','Pode ser mentor'],
+    zh:['仅查看','可投票(≥10)','验证+投票+提案','可成为导师']
+  };
+
+  // Avatar — generado desde wallet si no hay foto
+  const pav = document.getElementById('pav');
+  if(pav){
+    if(currentAvatarSrc){
+      pav.innerHTML = `<img src="${currentAvatarSrc}" alt="avatar" style="width:100%;height:100%;object-fit:cover;border-radius:14px"/>`;
+      pav.style.padding = '0';
+    } else if(walletOn){
+      pav.innerHTML = generateAvatar(MY_WALLET, 88);
+      pav.style.padding = '0';
+      pav.style.background = 'none';
+      pav.style.border = 'none';
+    } else {
+      pav.innerHTML = generateAvatar('', 88);
+      pav.style.padding = '0';
+      pav.style.background = 'none';
+      pav.style.border = 'none';
+    }
+  }
+
+  // Nombre / wallet
+  const pnm = document.getElementById('pnm');
+  if(pnm) pnm.textContent = walletOn ? shortAddr(MY_WALLET) : T('profile.connect');
+  const pw = document.getElementById('pw');
+  if(pw) pw.textContent = walletOn ? MY_WALLET : '—';
+  const pnet = document.getElementById('pnet');
+  if(pnet) pnet.style.display = walletOn ? 'flex' : 'none';
+
+  // Bio
+  const pbioTxt = document.getElementById('pbio-text');
+  const pbioEditBtn = document.getElementById('pbio-editbtn');
+  if(pbioTxt){
+    pbioTxt.textContent = walletOn ? (myBio || T('profile.bio')) : T('profile.bio');
+    if(pbioEditBtn) pbioEditBtn.style.display = walletOn ? 'inline-block' : 'none';
+  }
+
+  // Stats — asignar data-pv y animar
+  const vals = [sc, nv, PROJECTS.filter(p=>p.aut===MY_WALLET&&p.st===1).length, 1];
+  ['ps','pn','pb','pm2'].forEach((id,i)=>{
+    const el = document.getElementById(id);
+    if(!el) return;
+    const target = walletOn ? vals[i] : 0;
+    el.dataset.pv = target;
+    el.textContent = '0';
+    if(target > 0) animC2(el, target, 1000);
+  });
+
+  // Level bar
+  const lb = document.getElementById('lb');
+  if(lb) lb.style.width = pct + '%';
+  const ll = document.getElementById('ll');
+  if(ll){
+    const lv = {en:'Level',pt:'Nível',zh:'等级',es:'Nivel'}[lang];
+    ll.textContent = `${lv} ${nv} — ${(lbls[lang]||lbls.es)[nv]}`;
+  }
+
+  // Activity grid
+  buildActivityGrid();
+
+  // Aptitudes
+  const aptg = document.getElementById('apt-grid');
+  if(aptg){
+    if(walletOn){
+      const myApproved = PROJECTS.filter(p=>p.aut===MY_WALLET&&p.st===1);
+      const areaCount = {};
+      myApproved.forEach(p=>{ areaCount[p.a] = (areaCount[p.a]||0)+1; });
+      aptg.innerHTML = Object.keys(areaCount).length
+        ? Object.entries(areaCount).map(([a,n])=>`<div class="apt-tag">${a}<span>${n} â—Ž</span></div>`).join('')
+        : `<span style="color:var(--text3);font-size:13px">${lang==='en'?'Validate projects to unlock':lang==='pt'?'Valide projetos para desbloquear':lang==='zh'?'验证项目来解锁':'Valida proyectos para desbloquear'}</span>`;
+    } else {
+      aptg.innerHTML = `<span style="color:var(--text3);font-size:13px">${lang==='en'?'Connect wallet':lang==='pt'?'Conecte a carteira':lang==='zh'?'连接钱包':'Conecta tu wallet'}</span>`;
+    }
+  }
+
+  // Skill Badges
+  const bl = document.getElementById('blist');
+  if(bl){
+    if(walletOn){
+      const myApproved = PROJECTS.filter(p=>p.aut===MY_WALLET&&p.st===1);
+      bl.innerHTML = myApproved.length
+        ? myApproved.map(p=>`<span class="bpil">◎ ${p.a} · Score ${p.sc}</span>`).join('')
+        : `<span style="color:var(--text3);font-size:13px">${lang==='en'?'No approved projects yet':lang==='pt'?'Sem projetos aprovados':lang==='zh'?'还没有批准的项目':'Sin proyectos aprobados aún'}</span>`;
+    } else {
+      bl.innerHTML = `<span style="color:var(--text3);font-size:13px">${lang==='en'?'Connect wallet':lang==='pt'?'Conecte a carteira':lang==='zh'?'连接钱包':'Conecta wallet'}</span>`;
+    }
+  }
+
+  // Badge Case (colección detallada de badges)
+  const bcg = document.getElementById('badge-case-grid');
+  if(bcg){
+    if(walletOn){
+      const myApproved = PROJECTS.filter(p=>p.aut===MY_WALLET&&p.st===1);
+      bcg.innerHTML = myApproved.length
+        ? myApproved.map((p, idx)=>`
+          <article class="badge-case-card">
+            <div class="badge-case-top">
+              <span class="badge-case-pill">◎ ${p.a}</span>
+              <span class="badge-case-meta">#${idx + 1}</span>
+            </div>
+            <div class="badge-case-title">${p.n}</div>
+            <div class="badge-case-meta">Score snapshot: ${p.sc}</div>
+            <div class="badge-case-meta">${shortAddr(p.aut)}</div>
+          </article>
+        `).join('')
+        : `<span style="color:var(--text3);font-size:13px">${lang==='en'?'No badges earned yet':lang==='pt'?'Nenhuma badge ainda':lang==='zh'?'还没有获得徽章':'Aún no has conseguido badges'}</span>`;
+    } else {
+      bcg.innerHTML = `<span style="color:var(--text3);font-size:13px">${lang==='en'?'Connect wallet':lang==='pt'?'Conecte a carteira':lang==='zh'?'连接钱包':'Conecta wallet'}</span>`;
+    }
+  }
+
+  // Tabs proyectos
+  const ptabs = document.getElementById('ptabs');
+  if(ptabs){
+    if(walletOn){
+      const mine = PROJECTS.filter(p=>p.aut===MY_WALLET);
+      const c1=mine.filter(p=>p.st===1).length, c0=mine.filter(p=>p.st===0).length, c2=mine.filter(p=>p.st===2).length;
+      const tabDefs=[
+        {tab:'all',cls:'',        lbl:{es:'Todos',en:'All',pt:'Todos',zh:'全部'},      cnt:mine.length},
+        {tab:'1',  cls:'',        lbl:{es:'Aprobados',en:'Approved',pt:'Aprovados',zh:'已通过'}, cnt:c1},
+        {tab:'0',  cls:'amb-tab', lbl:{es:'Pendientes',en:'Pending',pt:'Pendentes',zh:'待审'},  cnt:c0},
+        {tab:'2',  cls:'red-tab', lbl:{es:'Rechazados',en:'Rejected',pt:'Rejeitados',zh:'已拒绝'},cnt:c2},
+      ];
+      ptabs.innerHTML = tabDefs.map(td=>`
+        <button class="ptab ${td.cls}${currentProjTab===td.tab?' active':''}" data-tab="${td.tab}" onclick="switchProjTab('${td.tab}')">
+          ${(td.lbl[lang]||td.lbl.es)}<span class="cnt">${td.cnt}</span>
+        </button>`).join('');
+      renderProjTab();
+    } else {
+      ptabs.innerHTML = '';
+      const mpg = document.getElementById('mpg');
+      if(mpg) mpg.innerHTML = `<p style="color:var(--text3);font-size:13px">${lang==='en'?'Connect your Solana wallet':lang==='pt'?'Conecte sua carteira Solana':lang==='zh'?'请连接您的 Solana 钱包':'Conecta tu wallet Solana'}</p>`;
+    }
+  }
+
+  // Re-bind hover en stats del perfil
+  document.querySelectorAll('.pstat-item').forEach(item=>{
+    if(item._psbnd) return;
+    item._psbnd = true;
+    item.addEventListener('mouseenter',()=>{
+      const el = item.querySelector('.psnum[data-pv]');
+      if(!el) return;
+      const target = parseInt(el.dataset.pv) || 0;
+      if(target === 0) return;
+      el.textContent = '0';
+      animC2(el, target, 800);
+    });
+  });
+
+  setTimeout(bindC, 100);
+}
+
+/* ════ NOTIFS ════ */
+function rNotifs(){
+  const el=document.getElementById('nl');if(!el)return;
+  const S=NSTRINGS[lang]||NSTRINGS.es;
+  const TL={es:['Hace 2h','Hace 5h','Ayer','Hace 3 días','Hace 5 días'],en:['2h ago','5h ago','Yesterday','3 days ago','5 days ago'],pt:['Há 2h','Há 5h','Ontem','Há 3 dias','Há 5 dias'],zh:['2小时前','5小时前','昨天','3天前','5天前']};
+  const tms=TL[lang]||TL.es;const dots=['g','b','g','r','a'];
+  el.innerHTML=[['n1t','n1d'],['n2t','n2d'],['n3t','n3d'],['n4t','n4d'],['n5t','n5d']].map(([tk,dk],i)=>`<div class="ni"><div class="ndot ${dots[i]}"></div><div><h4>${S[tk]}</h4><p>${S[dk]}</p></div><span class="ntime">${tms[i]}</span></div>`).join('');
+}
+
+/* ════ SECURITY ════ */
+function rSecurity(){
+  const g=document.getElementById('sg');
+  if(g)g.innerHTML=SECCARDS.map(c=>`<div class="secc rv0"><div class="sico">${ICONS[c.ic]}</div><h3>${c.title}</h3><p>${(c.desc[lang]||c.desc.es)}</p><div class="rsn">${c.rust.replace(/\n/g,'<br>')}</div><span class="stag">${c.tag}</span></div>`).join('');
+  const eg=document.getElementById('errorgrid');
+  if(eg)eg.innerHTML=CONTRACT_ERRORS.map(e=>`<div style="background:var(--card-bg);border:.5px solid rgba(255,68,68,0.18);border-radius:var(--r);padding:12px 14px">
+    <div style="font-family:monospace;font-size:11px;color:var(--red);font-weight:600;margin-bottom:4px">${e.code}</div>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:6px">${e.msg}</div>
+    <div style="font-size:10px;color:var(--text3);font-family:monospace">${e.ctx}</div>
+  </div>`).join('');
+  setTimeout(()=>{reveal();bindC();},80);
+}
+
+/* ════ FORM ════ */
+function uc(inp,cnt,max){const v=(document.getElementById(inp)||{}).value?.length||0;const el=document.getElementById(cnt);if(el){el.textContent=v+'/'+max;el.style.color=v>max*.88?'var(--amb)':'var(--text3)';}}
+function uc2(sel,cnt,max){const v=(document.getElementById(sel)||{}).value?.length||0;const el=document.getElementById(cnt);if(el){el.textContent=v+'/'+max;}}
+function sub(){
+  if(!walletOn){t(T('toast.upload'));return;}
+  const n=(document.getElementById('fn')||{}).value?.trim();
+  const a=(document.getElementById('fa')||{}).value;
+  const d=(document.getElementById('fd')||{}).value?.trim();
+  const e=(document.getElementById('fe')||{}).value?.trim();
+  // Mirrors require! checks from submit_project() in lib.rs
+  if(!n){t('⚠ NombreDemasiadoLargo / vacío');return;}
+  if(n.length>100){t('⚠ NombreDemasiadoLargo — máx 100 chars');return;}
+  if(!a||a.length>50){t('⚠ AreaDemasiadoLarga — máx 50 chars');return;}
+  if(!d||d.length>500){t('⚠ DescripcionDemasiadoLarga — máx 500 chars');return;}
+  if(!e||e.length>200){t('⚠ EvidenciaDemasiadoLarga — máx 200 chars');return;}
+  // Seeds: ["project", wallet.key(), nombre.as_bytes()]
+  PROJECTS.push({id:PROJECTS.length+1,n,a,d,ev:e,aut:MY_WALLET,sc:myScore,st:0,val:0,ts:Date.now(),comments:[]});
+  registerActivity('project', `Subió "${n}"`);
+  t(T('toast.sub'));
+  ['fn','fa','fd','fe'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  setTimeout(()=>go('projects'),1100);
+}
+
+/* ════ HERO CODE CANVAS ════ */
+(function initHeroCanvas(){
+  const canvas = document.getElementById('hero-canvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+
+  // Fragmentos reales de SkillProof DAO — Anchor/Rust/Solana
+  const CODE_LINES = [
+    {t:'kw',  s:'#[program]'},
+    {t:'kw',  s:'pub mod skillproof {'},
+    {t:'fn',  s:'  pub fn register_user(ctx: Context<RegisterUser>) -> Result<()> {'},
+    {t:'nm',  s:'    let user = &mut ctx.accounts.user_account;'},
+    {t:'nm',  s:'    user.wallet = ctx.accounts.signer.key();'},
+    {t:'g',   s:'    user.score = 0;'},
+    {t:'g',   s:'    user.nivel = 0;'},
+    {t:'g',   s:'    user.bump = ctx.bumps.user_account;'},
+    {t:'cm',  s:'    Ok(())'},
+    {t:'kw',  s:'  }'},
+    {t:'fn',  s:'  pub fn submit_project(ctx: Context<SubmitProject>,'},
+    {t:'nm',  s:'    nombre: String, area: String,'},
+    {t:'nm',  s:'    descripcion: String, evidencia: String,'},
+    {t:'nm',  s:'  ) -> Result<()> {'},
+    {t:'er',  s:'    require!(nombre.len() <= 100, NombreDemasiadoLargo);'},
+    {t:'er',  s:'    require!(area.len() <= 50, AreaDemasiadoLarga);'},
+    {t:'er',  s:'    require!(descripcion.len() <= 500, DescripcionDemasiadoLarga);'},
+    {t:'er',  s:'    require!(evidencia.len() <= 200, EvidenciaDemasiadoLarga);'},
+    {t:'g',   s:'    project.estado = 0; // pendiente'},
+    {t:'g',   s:'    project.validaciones = 0;'},
+    {t:'nm',  s:'    project.timestamp = Clock::get()?.unix_timestamp;'},
+    {t:'cm',  s:'    Ok(())'},
+    {t:'kw',  s:'  }'},
+    {t:'fn',  s:'  pub fn validate_project(ctx: Context<ValidateProject>,'},
+    {t:'nm',  s:'    aprobado: bool,'},
+    {t:'nm',  s:'    categoria_rechazo: u8,'},
+    {t:'nm',  s:'    comentario: String,'},
+    {t:'nm',  s:'  ) -> Result<()> {'},
+    {t:'er',  s:'    require!(validator_account.score >= 50, ScoreInsuficiente);'},
+    {t:'er',  s:'    require!(validator_account.wallet != project.author,'},
+    {t:'er',  s:'      NoPuedesValidarTuPropio);'},
+    {t:'er',  s:'    require!(project.estado == 0, ProyectoNoEstaPendiente);'},
+    {t:'g',   s:'    validator_user.score = validator_user.score.saturating_add(2);'},
+    {t:'cm',  s:'    Ok(())'},
+    {t:'kw',  s:'  }'},
+    {t:'fn',  s:'  pub fn mint_skill_badge(ctx: Context<MintSkillBadge>,'},
+    {t:'nm',  s:'    area: String) -> Result<()> {'},
+    {t:'er',  s:'    require!(project.estado == 1, ProyectoNoAprobado);'},
+    {t:'er',  s:'    require!(project.author == ctx.accounts.signer.key(),'},
+    {t:'er',  s:'      NoEresElAutor);'},
+    {t:'g',   s:'    badge.owner = ctx.accounts.signer.key();'},
+    {t:'g',   s:'    badge.score_al_momento = user.score;'},
+    {t:'cm',  s:'    Ok(())'},
+    {t:'kw',  s:'  }'},
+    {t:'fn',  s:'  pub fn complete_mentoring(ctx: Context<CompleteMentoring>) -> Result<()> {'},
+    {t:'g',   s:'    mentor.score = mentor.score.saturating_add(5);'},
+    {t:'g',   s:'    mentor.mentoring_count = mentor.mentoring_count.saturating_add(1);'},
+    {t:'nm',  s:'    badge.count = mentor.mentoring_count;'},
+    {t:'cm',  s:'    Ok(())'},
+    {t:'kw',  s:'  }'},
+    {t:'kw',  s:'}'},
+    {t:'attr',s:'#[account]'},
+    {t:'kw',  s:'pub struct UserAccount {'},
+    {t:'nm',  s:'    pub wallet: Pubkey,'},
+    {t:'g',   s:'    pub score: u64,'},
+    {t:'g',   s:'    pub nivel: u8,'},
+    {t:'g',   s:'    pub mentoring_count: u32,'},
+    {t:'nm',  s:'    pub bump: u8,'},
+    {t:'kw',  s:'}'},
+    {t:'attr',s:'#[account]'},
+    {t:'kw',  s:'pub struct ProjectAccount {'},
+    {t:'nm',  s:'    pub author: Pubkey,'},
+    {t:'nm',  s:'    pub nombre: String,'},
+    {t:'g',   s:'    pub estado: u8,       // 0=pending 1=approved 2=rejected'},
+    {t:'g',   s:'    pub validaciones: u8,'},
+    {t:'nm',  s:'    pub timestamp: i64,'},
+    {t:'kw',  s:'}'},
+    {t:'attr',s:'seeds = [b"user", signer.key().as_ref()], bump'},
+    {t:'attr',s:'seeds = [b"project", signer.key().as_ref(), nombre.as_bytes()], bump'},
+    {t:'attr',s:'seeds = [b"validation", signer.key().as_ref(), project.key().as_ref()], bump'},
+    {t:'attr',s:'seeds = [b"badge", signer.key().as_ref(), project.key().as_ref()], bump'},
+    {t:'attr',s:'seeds = [b"mentoring", signer.key().as_ref(), project.key().as_ref()], bump'},
+    {t:'er',  s:'declare_id!("TU_PROGRAM_ID");'},
+    {t:'fn',  s:'use anchor_lang::prelude::*;'},
+    {t:'nm',  s:'pub const LEN: usize = 32 + 8 + 1 + 4 + 1;'},
+    {t:'er',  s:'ScoreInsuficiente,'},
+    {t:'er',  s:'NoPuedesValidarTuPropio,'},
+    {t:'er',  s:'ProyectoNoEstaPendiente,'},
+    {t:'er',  s:'MentorSinNivel,'},
+    {t:'er',  s:'NivelInsuficiente,'},
+  ];
+
+  // Colores por tipo — modo oscuro y claro
+  function getColors(dark){
+    return {
+      kw:   dark ? 'rgba(255,157,77,{a})'  : 'rgba(180,80,0,{a})',
+      fn:   dark ? 'rgba(100,180,255,{a})' : 'rgba(20,100,200,{a})',
+      nm:   dark ? 'rgba(200,210,220,{a})' : 'rgba(50,60,80,{a})',
+      g:    dark ? 'rgba(255,110,45,{a})'   : 'rgba(212,91,33,{a})',
+      cm:   dark ? 'rgba(100,110,120,{a})' : 'rgba(140,150,160,{a})',
+      er:   dark ? 'rgba(255,120,120,{a})' : 'rgba(180,30,30,{a})',
+      attr: dark ? 'rgba(255,110,45,{a})'   : 'rgba(212,91,33,{a})',
+    };
+  }
+
+  function col(type, alpha, dark){
+    const C = getColors(dark);
+    return (C[type]||C.nm).replace('{a}', alpha);
+  }
+
+  // Partículas de línea de código
+  const particles = [];
+  const FONT_SIZE = 11.5;
+  const FONT = `${FONT_SIZE}px 'Fira Code', 'Cascadia Code', 'JetBrains Mono', monospace`;
+
+  function resize(){
+    canvas.width  = canvas.offsetWidth  * window.devicePixelRatio;
+    canvas.height = canvas.offsetHeight * window.devicePixelRatio;
+    ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+  }
+
+  function spawnParticle(){
+    const line = CODE_LINES[Math.floor(Math.random()*CODE_LINES.length)];
+    const W = canvas.offsetWidth;
+    const H = canvas.offsetHeight;
+    // Solo aparecen en la mitad derecha (60-100% del ancho)
+    particles.push({
+      text:  line.s,
+      type:  line.t,
+      x:     W * (0.42 + Math.random() * 0.58),
+      y:     H * (0.04 + Math.random() * 0.92),
+      vy:    -(0.12 + Math.random() * 0.18),   // sube lentamente
+      alpha: 0,
+      life:  0,
+      maxLife: 280 + Math.random() * 220,
+      fadeIn:  40,
+      fadeOut: 60,
+    });
+  }
+
+  // Inicializar con partículas ya distribuidas
+  for(let i=0; i<28; i++){
+    spawnParticle();
+    // Dar vida inicial aleatoria para que no empiecen todas igual
+    const p = particles[particles.length-1];
+    p.life = Math.random() * p.maxLife;
+    p.y   -= p.vy * p.life;
+  }
+
+  let lastSpawn = 0;
+  function draw(ts){
+    const W = canvas.offsetWidth;
+    const H = canvas.offsetHeight;
+    const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+
+    ctx.clearRect(0, 0, W, H);
+    ctx.font = FONT;
+    ctx.textBaseline = 'middle';
+
+    const now = ts || 0;
+    if(now - lastSpawn > 320){
+      spawnParticle();
+      lastSpawn = now;
+    }
+
+    for(let i = particles.length-1; i >= 0; i--){
+      const p = particles[i];
+      p.life += 1;
+      p.y    += p.vy;
+
+      // Alpha: fade in → hold → fade out
+      if(p.life < p.fadeIn){
+        p.alpha = p.life / p.fadeIn;
+      } else if(p.life > p.maxLife - p.fadeOut){
+        p.alpha = Math.max(0, (p.maxLife - p.life) / p.fadeOut);
+      } else {
+        p.alpha = 1;
+      }
+
+      // Max alpha varía por tipo — comentarios más tenues, keywords más visibles
+      const maxA = {kw:.72, fn:.68, nm:.52, g:.78, cm:.28, er:.65, attr:.72}[p.type] || .5;
+      const a = p.alpha * maxA;
+
+      if(a <= 0.01){ particles.splice(i,1); continue; }
+
+      ctx.fillStyle = col(p.type, a.toFixed(3), isDark);
+      ctx.fillText(p.text, p.x, p.y);
+    }
+    requestAnimationFrame(draw);
+  }
+
+  resize();
+  window.addEventListener('resize', resize);
+  requestAnimationFrame(draw);
+})();
+
+/* ════ INIT ════ */
+try{
+  const savedLang=localStorage.getItem('sp_lang');
+  if(savedLang&&LMETA[savedLang]) lang=savedLang;
+  const savedTheme=localStorage.getItem('sp_theme');
+  if(savedTheme==='dark'||savedTheme==='light') dark=(savedTheme==='dark');
+}catch(_){}
+applyTheme();
+applyI18n();rHome();rNotifs();
+setTimeout(()=>{reveal();bindC();},200);
+</script>
+</body>
+</html>
+

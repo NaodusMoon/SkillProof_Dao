@@ -11,6 +11,7 @@ const navItems = [
   { href: '/badges', label: 'Badges' },
   { href: '/mentores', label: 'Mentores' },
   { href: '/gobernanza', label: 'Gobernanza' },
+  { href: '/showcase', label: 'Showcase' },
 ]
 
 export function SiteHeader() {
