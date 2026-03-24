@@ -1,5 +1,6 @@
 export type Role = 'builder' | 'validator' | 'mentor'
-export type ProjectStatus = 'pending' | 'approved' | 'rejected' | 'retry'
+export type SolanaCluster = 'devnet' | 'testnet'
+export type ProjectStatus = 'pending' | 'approved' | 'rejected'
 export type SkillArea =
   | 'Frontend'
   | 'Protocol'
@@ -201,51 +202,117 @@ type VoteInput = {
   stance: 'support' | 'reject'
 }
 
+export type AuthUser = {
+  id: string
+  email?: string
+  wallet?: string
+  displayName: string
+  method: 'password' | 'wallet'
+}
+
+type AuthResponse = {
+  token: string
+  user: AuthUser
+}
+
+type WalletNonceResponse = {
+  nonce: string
+  message: string
+}
+
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:4000'
 
-async function request<T>(path: string, init?: RequestInit) {
+async function request<T>(path: string, init?: RequestInit & { token?: string }) {
+  const headers = new Headers(init?.headers ?? {})
+  if (!headers.has('Content-Type') && init?.body) {
+    headers.set('Content-Type', 'application/json')
+  }
+  if (init?.token) {
+    headers.set('Authorization', `Bearer ${init.token}`)
+  }
+
   const response = await fetch(`${API_BASE}${path}`, {
-    headers: {
-      'Content-Type': 'application/json',
-      ...(init?.headers ?? {}),
-    },
+    headers,
     ...init,
   })
 
   if (!response.ok) {
-    throw new Error(`Request failed: ${response.status}`)
+    const payload = (await response.json().catch(() => null)) as { error?: string } | null
+    throw new Error(payload?.error ?? `Request failed: ${response.status}`)
   }
 
   return response.json() as Promise<T>
 }
 
 export const api = {
-  bootstrap(wallet?: string) {
-    const search = wallet ? `?wallet=${encodeURIComponent(wallet)}` : ''
+  bootstrap(wallet?: string, network?: SolanaCluster) {
+    const params = new URLSearchParams()
+    if (wallet) params.set('wallet', wallet)
+    if (network) params.set('network', network)
+    const search = params.toString() ? `?${params.toString()}` : ''
     return request<BootstrapPayload>(`/api/bootstrap${search}`)
   },
-  createPost(payload: CreatePostInput) {
+  createPost(payload: CreatePostInput, token?: string) {
     return request<Post>('/api/posts', {
       method: 'POST',
       body: JSON.stringify(payload),
+      token,
     })
   },
-  createProject(payload: CreateProjectInput) {
+  createProject(payload: CreateProjectInput, token?: string) {
     return request<Project>('/api/projects', {
       method: 'POST',
       body: JSON.stringify(payload),
+      token,
     })
   },
-  reviewProject(projectId: string, payload: ReviewInput) {
+  reviewProject(projectId: string, payload: ReviewInput, token?: string) {
     return request<Project>(`/api/projects/${projectId}/review`, {
       method: 'POST',
       body: JSON.stringify(payload),
+      token,
     })
   },
-  voteProposal(proposalId: string, payload: VoteInput) {
+  voteProposal(proposalId: string, payload: VoteInput, token?: string) {
     return request<Proposal>(`/api/proposals/${proposalId}/vote`, {
       method: 'POST',
       body: JSON.stringify(payload),
+      token,
+    })
+  },
+  authRegister(payload: { email: string; password: string; displayName: string }) {
+    return request<AuthResponse>('/api/auth/register', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    })
+  },
+  authLogin(payload: { email: string; password: string }) {
+    return request<AuthResponse>('/api/auth/login', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    })
+  },
+  authSolanaNonce(payload: { wallet: string }) {
+    return request<WalletNonceResponse>('/api/auth/solana/nonce', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    })
+  },
+  authSolanaVerify(payload: {
+    wallet: string
+    nonce: string
+    signature: string
+    displayName?: string
+  }) {
+    return request<AuthResponse>('/api/auth/solana/verify', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    })
+  },
+  authMe(token: string) {
+    return request<{ user: AuthUser }>('/api/auth/me', {
+      method: 'GET',
+      token,
     })
   },
 }
